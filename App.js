@@ -46,9 +46,6 @@ const App = () => {
   }, [])
 
   if (!fontsLoaded && !fontError) {
-    console.log('Loading fonts')
-    console.log(fontsLoaded)
-    console.log(fontError)
     return undefined
   } else {
     console.log('Fonts loaded')
@@ -66,7 +63,7 @@ const App = () => {
         />
         {/* You will add more Stack.Screen entries here for other screens in your app */}
       </Stack.Navigator>
-      <StatusBar style='auto' />
+      <StatusBar style='light' />
     </NavigationContainer>
   )
 }

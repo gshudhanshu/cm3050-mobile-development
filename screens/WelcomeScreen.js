@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.primary,
     gap: 100,
-    paddingVertical: 70,
+    paddingVertical: 50,
   },
   logoContainer: {
     alignItems: 'center',
