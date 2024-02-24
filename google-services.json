@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1050634579199",
+    "project_id": "cm3050-calm-mind",
+    "storage_bucket": "cm3050-calm-mind.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050634579199:android:91b519d90c5e0aa3ce30ca",
+        "android_client_info": {
+          "package_name": "com.uol.calmmind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050634579199-u9ossbnuguku27n3vker268cgf4p1eek.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uol.calmmind",
+            "certificate_hash": "64fb104400c85e08e84a603e6e8f89a5d46cde87"
+          }
+        },
+        {
+          "client_id": "1050634579199-f32n4t0j3f4smfom4e0ef4h89q475rha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHaLxBjM1r0Z0IJRdFWdCCwgFvzAizP58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050634579199-f32n4t0j3f4smfom4e0ef4h89q475rha.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1050634579199-gk0ja8ds0arr4f93aikdmruiumdra1p0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.uol.calmmind"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

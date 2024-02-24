@@ -12,6 +12,9 @@ import { createStackNavigator } from '@react-navigation/stack'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import WelcomeScreen from './screens/WelcomeScreen'
+import LoginScreen from './screens/LoginScreen'
+// import SignupScreen from './screens/SignupScreen'
+// import HomeScreen from './screens/HomeScreen'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -59,9 +62,12 @@ const App = () => {
         <Stack.Screen
           name='Welcome'
           component={WelcomeScreen}
-          options={{ headerShown: false }} // Hides the navigation bar on the welcome screen
+          // Hides the navigation bar on the welcome screen
+          options={{ headerShown: false }}
         />
-        {/* You will add more Stack.Screen entries here for other screens in your app */}
+        <Stack.Screen name='Login' component={LoginScreen} />
+        {/* <Stack.Screen name='Signup' component={SignupScreen} /> */}
+        {/* <Stack.Screen name='Home' component={HomeScreen} /> */}
       </Stack.Navigator>
       <StatusBar style='light' />
     </NavigationContainer>
