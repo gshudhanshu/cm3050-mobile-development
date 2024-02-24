@@ -9,12 +9,18 @@ import {
 } from '@expo-google-fonts/poppins'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
+import theme from './utils/theme'
 import WelcomeScreen from './screens/WelcomeScreen'
 import LoginScreen from './screens/LoginScreen'
-// import SignupScreen from './screens/SignupScreen'
-// import HomeScreen from './screens/HomeScreen'
+import SignupScreen from './screens/SignupScreen'
+import ForgetPasswordScreen from './screens/ForgetPasswordScreen'
+import HomeScreen from './screens/HomeScreen'
+import SearchScreen from './screens/SearchScreen'
+import JournalScreen from './screens/JournalScreen'
+import ProgressScreen from './screens/ProgressScreen'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -30,9 +36,34 @@ const config = {
     restSpeedThreshold: 0.01,
   },
 }
-const Stack = createStackNavigator()
 
-const App = () => {
+const AuthStack = createStackNavigator()
+const MainTab = createBottomTabNavigator()
+const RootStack = createStackNavigator()
+
+const AuthFlow = () => (
+  <AuthStack.Navigator>
+    <AuthStack.Screen
+      name='Welcome'
+      component={WelcomeScreen}
+      options={{ headerShown: false }}
+    />
+    <AuthStack.Screen name='Login' component={LoginScreen} />
+    <AuthStack.Screen name='Signup' component={SignupScreen} />
+    <AuthStack.Screen name='ForgetPassword' component={ForgetPasswordScreen} />
+  </AuthStack.Navigator>
+)
+
+const MainAppFlow = () => (
+  <MainTab.Navigator>
+    <MainTab.Screen name='Home' component={HomeScreen} />
+    <MainTab.Screen name='Search' component={SearchScreen} />
+    <MainTab.Screen name='Journal' component={JournalScreen} />
+    <MainTab.Screen name='Progress' component={ProgressScreen} />
+  </MainTab.Navigator>
+)
+
+export default function App() {
   let [fontsLoaded, fontError] = useFonts({
     Poppins_300Light,
     Poppins_400Regular,
@@ -40,6 +71,8 @@ const App = () => {
     Poppins_600SemiBold,
     Poppins_700Bold,
   })
+
+  const isAuthenticated = false
 
   useEffect(() => {
     async function prepare() {
@@ -57,21 +90,13 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Welcome'>
-        {/* Stack.Screen components for each screen in your app */}
-        <Stack.Screen
-          name='Welcome'
-          component={WelcomeScreen}
-          // Hides the navigation bar on the welcome screen
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name='Login' component={LoginScreen} />
-        {/* <Stack.Screen name='Signup' component={SignupScreen} /> */}
-        {/* <Stack.Screen name='Home' component={HomeScreen} /> */}
-      </Stack.Navigator>
-      <StatusBar style='light' />
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+        {isAuthenticated ? (
+          <RootStack.Screen name='MainApp' component={MainAppFlow} />
+        ) : (
+          <RootStack.Screen name='Auth' component={AuthFlow} />
+        )}
+      </RootStack.Navigator>
     </NavigationContainer>
   )
 }
-
-export default App

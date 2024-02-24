@@ -17,7 +17,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 
 const WelcomeScreen = ({ navigation }) => {
   return (
-    <SafeAreaView style={[GlobalStyles.container, styles.safeAreaContainer]}>
+    <SafeAreaView style={[GlobalStyles.safeAreaContainer]}>
       <View style={[GlobalStyles.container, styles.container]}>
         {/* Logo and welcome text */}
         <View style={styles.logoContainer}>
@@ -111,11 +111,6 @@ const WelcomeScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  safeAreaContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.primary,
-    overflow: 'hidden',
-  },
   container: {
     justifyContent: 'space-between',
     flex: 1,
