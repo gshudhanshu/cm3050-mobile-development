@@ -17,7 +17,10 @@ import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
 import CText from '../components/common/CText'
 import { useNavigation } from '@react-navigation/native'
-import { auth } from '../firebase/firebase'
+
+import { db } from '../firebase/firebase'
+import { doc, setDoc } from 'firebase/firestore'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 
 import FacebookIcon from '../assets/facebook-icon'
 import GoogleIcon from '../assets/google-icon'
@@ -38,6 +41,10 @@ const signupSchema = yup.object().shape({
 
 const SignupScreen = () => {
   const navigation = useNavigation()
+  const [signUpError, setSignUpError] = useState('')
+
+  // Initialize auth here to use throughout the component
+  const auth = getAuth()
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -64,8 +71,35 @@ const SignupScreen = () => {
     navigation.navigate('ForgetPassword')
   }
 
-  const handleSignUp = () => {
-    navigation.navigate('Signup')
+  const handleSubmit = async (values) => {
+    const { email, password, firstName, lastName } = values
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      )
+      const user = userCredential.user
+
+      // After successful signup, save additional user details in Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        firstName,
+        lastName,
+        email,
+      })
+
+      user.firstName = firstName
+      user.lastName = lastName
+
+      console.log('User created and additional details saved in Firestore.')
+      navigation.navigate('Home') // Navigate to the Home screen or wherever you need
+    } catch (error) {
+      const errorCode = error.code
+      const errorMessage = error.message
+      setSignUpError(errorMessage) // Display error message
+      console.error(errorCode, errorMessage)
+    }
   }
 
   return (
@@ -108,7 +142,7 @@ const SignupScreen = () => {
               password: '',
             }}
             validationSchema={signupSchema}
-            onSubmit={(values) => handleSignUp(values)}
+            onSubmit={(values) => handleSubmit(values)}
           >
             {({
               handleChange,
@@ -170,8 +204,12 @@ const SignupScreen = () => {
                       {errors.password}
                     </CText>
                   )}
+                  {signUpError && (
+                    <CText style={GlobalStyles.errorText}>{signUpError}</CText>
+                  )}
+
                   <Pressable onPress={handleSubmit} style={GlobalStyles.button}>
-                    <CText style={GlobalStyles.buttonText}>Login</CText>
+                    <CText style={GlobalStyles.buttonText}>Sign Up</CText>
                   </Pressable>
                 </View>
                 <View style={styles.loginContainer}>
