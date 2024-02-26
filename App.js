@@ -89,6 +89,7 @@ const MainAppFlow = () => (
       component={HomeScreen}
       options={{
         tabBarLabel: 'Home',
+        headerShown: false,
         tabBarIcon: ({ color, size, focused }) => (
           <View style={focused ? styles.activeTabStyle : null}>
             <HomeIcon name='home' color={color} size={size} />

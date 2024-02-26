@@ -12,6 +12,11 @@ const GlobalStyles = StyleSheet.create({
     marginHorizontal: RFValue(20),
     marginVertical: RFValue(20),
   },
+  logo: {
+    width: RFValue(150),
+    height: RFValue(38),
+    fill: theme.colors.grayLight,
+  },
   button: {
     backgroundColor: theme.colors.tertiary,
     padding: theme.spacing.m,

@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  StatusBar,
 } from 'react-native'
 import CText from '../components/common/CText'
 import { useFonts, Poppins_200ExtraLight } from '@expo-google-fonts/poppins'
@@ -18,10 +19,14 @@ import { RFValue } from 'react-native-responsive-fontsize'
 const WelcomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={[GlobalStyles.safeAreaContainer]}>
+      <StatusBar
+        barStyle='light-content'
+        backgroundColor={theme.colors.primary}
+      />
       <View style={[GlobalStyles.container, styles.container]}>
         {/* Logo and welcome text */}
         <View style={styles.logoContainer}>
-          <Logo style={styles.logo} />
+          <Logo style={GlobalStyles.logo} />
           <View>
             <CText weight='semiBold' style={[styles.welcomeText]}>
               Welcome
@@ -123,11 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 50,
   },
-  logo: {
-    width: RFValue(150),
-    height: RFValue(38),
-    fill: theme.colors.grayLight,
-  },
+
   circles: {
     position: 'absolute',
     justifyContent: 'center',
