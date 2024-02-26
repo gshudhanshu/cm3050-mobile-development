@@ -17,6 +17,7 @@ import theme from '../utils/theme'
 import CText from '../components/common/CText'
 import { useNavigation } from '@react-navigation/native'
 import { auth } from '../firebase/firebase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 import FacebookIcon from '../assets/facebook-icon'
 import GoogleIcon from '../assets/google-icon'
@@ -47,8 +48,7 @@ const LoginScreen = () => {
   }, [])
 
   const handleLogin = (values) => {
-    auth
-      .signInWithEmailAndPassword(values.email, values.password)
+    signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user

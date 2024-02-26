@@ -9,28 +9,51 @@ import {
 import { BlurView } from 'expo-blur'
 import { RFValue } from 'react-native-responsive-fontsize'
 import theme from '../utils/theme'
+import SpeakerIcon from '../assets/speaker-icon'
+import ClockIcon from '../assets/clock-icon'
+import CText from './common/CText'
 
-const SessionCard = ({ onPress }) => {
+const SessionCard = ({ imageUrl, level, title, type, duration, onPress }) => {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       <ImageBackground
         source={{
-          uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1280px-Image_created_with_a_mobile_phone.png',
+          uri: imageUrl,
         }}
         resizeMode='cover'
-        style={styles.backgroundImage}
+        style={styles.cardBackgroundImage}
       >
-        <View style={styles.overlay}>
-          <BlurView intensity={50} style={styles.blurContainer}>
-            <Text style={styles.level}>Beginner</Text>
-          </BlurView>
-          <View>
-            <Text style={styles.title} numberOfLines={1}>
-              On the Beach
-            </Text>
-            <BlurView intensity={100} style={styles.blurContainer}>
-              <Text style={styles.sessionType}>Guided</Text>
-              <Text style={styles.duration}>25 min</Text>
+        <View style={styles.cardOverlay}>
+          <View style={styles.cardContent}>
+            <BlurView
+              intensity={50}
+              style={styles.levelTagBlur}
+              experimentalBlurMethod={'dimezisBlurView'}
+            >
+              <CText style={styles.levelText}>{level}</CText>
+            </BlurView>
+            <BlurView
+              intensity={50}
+              style={styles.sessionInfoBlur}
+              experimentalBlurMethod={'dimezisBlurView'}
+            >
+              <CText
+                style={styles.sessionTitleText}
+                weight={'semiBold'}
+                numberOfLines={1}
+              >
+                {title}
+              </CText>
+              <View style={styles.sessionDetails}>
+                <View style={styles.sessionTypeContainer}>
+                  <SpeakerIcon fill={theme.colors.white} />
+                  <CText style={styles.sessionTypeText}>{type}</CText>
+                </View>
+                <View style={styles.sessionDurationContainer}>
+                  <ClockIcon fill={theme.colors.white} />
+                  <CText style={styles.sessionDurationText}>{duration}</CText>
+                </View>
+              </View>
             </BlurView>
           </View>
         </View>
@@ -40,8 +63,8 @@ const SessionCard = ({ onPress }) => {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 8,
+  cardContainer: {
+    borderRadius: RFValue(6),
     overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',
@@ -51,54 +74,65 @@ const styles = StyleSheet.create({
     height: RFValue(200),
     width: RFValue(170),
   },
-  backgroundImage: {
+  cardBackgroundImage: {
     width: '100%',
     height: '100%',
-    justifyContent: 'flex-end',
   },
-  overlay: {
-    padding: 16,
+  cardOverlay: {
+    flex: 1,
+    justifyContent: 'space-between',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    height: '100%',
+  },
+  cardContent: {
+    flex: 1,
     justifyContent: 'space-between',
   },
-  blurContainer: {
-    borderRadius: 8,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    marginVertical: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  blurLevel: {
-    borderRadius: 4,
+  levelTagBlur: {
+    borderRadius: RFValue(6),
     overflow: 'hidden',
+    alignSelf: 'flex-start',
+    marginTop: RFValue(6),
+    marginLeft: RFValue(6),
   },
-  blurSessionInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 4,
+  sessionInfoBlur: {
     overflow: 'hidden',
+    flexDirection: 'column',
+    padding: RFValue(12),
+    gap: RFValue(4),
   },
-  level: {
-    fontSize: 14,
+  levelText: {
+    fontSize: theme.fonts.sizes.body,
     color: theme.colors.white,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    padding: RFValue(6),
+    textAlign: 'center',
   },
-  title: {
+  sessionTitleText: {
     fontSize: theme.fonts.sizes.h6,
     color: theme.colors.white,
-    fontWeight: 'bold',
   },
-
-  sessionType: {
+  sessionDetails: {
+    flexDirection: 'row',
+  },
+  sessionTypeText: {
     fontSize: theme.fonts.sizes.body,
     color: theme.colors.white,
-    marginRight: 8,
+    marginRight: RFValue(6),
   },
-  duration: {
+  sessionDurationText: {
     fontSize: theme.fonts.sizes.body,
     color: theme.colors.white,
+  },
+  sessionTypeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: RFValue(3),
+  },
+  sessionDurationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: RFValue(3),
   },
 })
 

@@ -84,15 +84,61 @@ export default function HomeScreen() {
           </View>
           {/* Trending sessions */}
           <View>
-            <View>
+            <View style={styles.blockContainer}>
               <CText weight='semiBold' style={styles.blockTitle}>
-                Trending Sessions
+                Trending
               </CText>
               <CText style={styles.blockSubTitle}>24 sessions</CText>
             </View>
-            <ScrollView>
-              <SessionCard />
-              <SessionCard />
+            <ScrollView directionalLockEnabled={'false'} horizontal={true}>
+              <View style={styles.sessionsContainer}>
+                <SessionCard
+                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
+                  level='Beginner'
+                  title='On the Beach'
+                  type='Guided'
+                  duration='25 min'
+                  onPress={() => {}}
+                />
+                <SessionCard
+                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
+                  level='Beginner'
+                  title='On the Beach'
+                  type='Guided'
+                  duration='25 min'
+                  onPress={() => {}}
+                />
+              </View>
+            </ScrollView>
+          </View>
+
+          {/* Trending sessions */}
+          <View>
+            <View style={styles.blockContainer}>
+              <CText weight='semiBold' style={styles.blockTitle}>
+                Trending
+              </CText>
+              <CText style={styles.blockSubTitle}>25 sessions</CText>
+            </View>
+            <ScrollView directionalLockEnabled={'false'} horizontal={true}>
+              <View style={styles.sessionsContainer}>
+                <SessionCard
+                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
+                  level='Beginner'
+                  title='On the Beach'
+                  type='Guided'
+                  duration='25 min'
+                  onPress={() => {}}
+                />
+                <SessionCard
+                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
+                  level='Beginner'
+                  title='On the Beach'
+                  type='Guided'
+                  duration='25 min'
+                  onPress={() => {}}
+                />
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -145,7 +191,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     width: '60%',
   },
-
   todayQuote: {
     fontSize: theme.fonts.sizes.body,
     color: theme.colors.primary,
@@ -158,5 +203,27 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     paddingVertical: RFValue(6),
     paddingHorizontal: RFValue(15),
+  },
+
+  blockContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: RFValue(15),
+  },
+
+  blockTitle: {
+    fontSize: theme.fonts.sizes.h5,
+    color: theme.colors.white,
+  },
+
+  blockSubTitle: {
+    fontSize: theme.fonts.sizes.body,
+    color: theme.colors.grayLight,
+  },
+  sessionsContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    gap: RFValue(15),
   },
 })
