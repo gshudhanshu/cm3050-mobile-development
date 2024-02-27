@@ -61,6 +61,7 @@ const categoriesData = [
 export default function SearchScreen() {
   const renderCategoryCard = (item, index) => (
     <View
+      key={item.id}
       style={[
         styles.categoryCardContainer,
         index % 2 !== 0 && styles.categoryCardRight,
@@ -86,7 +87,6 @@ export default function SearchScreen() {
           <Header
             showBack={false}
             isHome={false}
-            avatarUrl='https://placehold.co/50x50.png'
             title={'Search'}
             onAvatarPress={() => {}}
           />

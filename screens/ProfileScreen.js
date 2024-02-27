@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   View,
   StyleSheet,
@@ -10,17 +10,30 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
+  TextInput,
+  Platform,
 } from 'react-native'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import * as ImagePicker from 'expo-image-picker'
-import { TextInput } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { Picker } from '@react-native-picker/picker'
+
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(customParseFormat)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('Europe/London')
+
 import {
   uploadProfilePicture,
   saveUserProfile,
   getUserProfile,
 } from '../utils/userProfileUtils'
+import useAuthStore from '../store/useAuthStore'
+
 import { auth } from '../firebase/firebase' // Adjust import paths as necessary
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
@@ -32,22 +45,41 @@ import Header from '../components/Header'
 const ProfileSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required'),
   lastName: Yup.string().required('Last name is required'),
-  dob: Yup.string().required('Date of Birth is required'),
+  dob: Yup.date().required('Date of Birth is required'),
   gender: Yup.string().required('Gender is required'),
 })
 
 const ProfileScreen = () => {
   const navigation = useNavigation()
+  const { setUserProfile } = useAuthStore()
+  const [initialValues, setInitialValues] = useState({
+    firstName: '',
+    lastName: '',
+    dob: new Date(),
+    gender: '',
+    profilePicture: '',
+  })
+  const [showDatePicker, setShowDatePicker] = useState(false)
+
+  const fetchUserProfile = async () => {
+    const userId = auth.currentUser.uid
+    const profile = await getUserProfile(userId)
+    if (profile) {
+      setUserProfile(profile)
+    }
+    const formattedDob = dayjs(profile.dob, 'DD/MM/YYYY').toDate()
+    console.log(profile.dob)
+    console.log(formattedDob)
+    if (profile) {
+      setInitialValues({
+        ...initialValues,
+        ...profile,
+        dob: formattedDob || dayjs(),
+      })
+    }
+  }
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const userId = auth.currentUser.uid
-      const profile = await getUserProfile(userId)
-      if (profile) {
-        // Assuming setFieldValue is available here to prefill the form
-      }
-    }
-
     fetchUserProfile()
   }, [])
 
@@ -55,22 +87,36 @@ const ProfileScreen = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [3, 3],
       quality: 1,
     })
 
     if (!result.cancelled) {
       const imageUrl = await uploadProfilePicture(
         auth.currentUser.uid,
-        result.uri
+        result.assets[0].uri
       )
       setFieldValue('profilePicture', imageUrl)
     }
   }
 
+  const submitForm = async (values) => {
+    try {
+      console.log('values:', values)
+      const userId = auth.currentUser.uid
+      const formattedDob = dayjs(values.dob).format('DD/MM/YYYY')
+      await saveUserProfile(userId, { ...values, dob: formattedDob })
+      Alert.alert('Profile updated successfully!')
+      fetchUserProfile()
+    } catch (error) {
+      console.error('Failed to update profile:', error)
+      Alert.alert('Failed to update profile.')
+    }
+  }
+
   return (
     <SafeAreaView style={GlobalStyles.safeAreaContainer}>
-      <ScrollView style={{ marginBottom: RFValue(80) }}>
+      <ScrollView>
         <StatusBar
           barStyle='light-content'
           backgroundColor={theme.colors.primary}
@@ -79,29 +125,14 @@ const ProfileScreen = () => {
           <Header
             showBack={true}
             isHome={true}
-            avatarUrl='https://placehold.co/50x50.png'
             onAvatarPress={() => setIsSettingsModalVisible(true)}
           />
           <View style={styles.profileContainer}>
             <Formik
-              initialValues={{
-                firstName: '',
-                lastName: '',
-                dob: '',
-                gender: '',
-                profilePicture: '',
-              }}
+              initialValues={initialValues}
               validationSchema={ProfileSchema}
-              onSubmit={async (values) => {
-                try {
-                  const userId = auth.currentUser.uid
-                  await saveUserProfile(userId, values)
-                  Alert.alert('Profile updated successfully!')
-                } catch (error) {
-                  console.error('Failed to update profile:', error)
-                  Alert.alert('Failed to update profile.')
-                }
-              }}
+              enableReinitialize={true}
+              onSubmit={(values) => submitForm(values)}
             >
               {({
                 handleChange,
@@ -119,16 +150,17 @@ const ProfileScreen = () => {
                     </TouchableOpacity>
                   </View>
                   <View style={styles.formContainer}>
-                    <Button
-                      title='Pick an image from camera roll'
-                      onPress={() => pickImage(setFieldValue)}
-                    />
-                    {values.profilePicture ? (
+                    <TouchableOpacity onPress={() => pickImage(setFieldValue)}>
                       <Image
-                        source={{ uri: values.profilePicture }}
+                        source={{
+                          uri:
+                            values.profilePicture ||
+                            'https://placehold.it/100x100',
+                        }}
                         style={styles.image}
                       />
-                    ) : null}
+                    </TouchableOpacity>
+
                     <TextInput
                       style={GlobalStyles.input}
                       onChangeText={handleChange('firstName')}
@@ -137,7 +169,9 @@ const ProfileScreen = () => {
                       placeholder='First Name'
                     />
                     {touched.firstName && errors.firstName && (
-                      <Text style={styles.errorText}>{errors.firstName}</Text>
+                      <Text style={GlobalStyles.errorText}>
+                        {errors.firstName}
+                      </Text>
                     )}
                     <TextInput
                       style={GlobalStyles.input}
@@ -147,29 +181,47 @@ const ProfileScreen = () => {
                       placeholder='Last Name'
                     />
                     {touched.lastName && errors.lastName && (
-                      <Text style={styles.errorText}>{errors.lastName}</Text>
+                      <Text style={GlobalStyles.errorText}>
+                        {errors.lastName}
+                      </Text>
                     )}
-                    <TextInput
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                      <TextInput
+                        style={GlobalStyles.input}
+                        value={values.dob ? values.dob.toDateString() : ''}
+                        placeholder='Date of Birth'
+                        editable={false} // Makes the text input non-editable
+                      />
+                    </TouchableOpacity>
+                    {showDatePicker && (
+                      <DateTimePicker
+                        value={values.dob || new Date()}
+                        mode='date'
+                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                        onChange={(event, selectedDate) => {
+                          setShowDatePicker(Platform.OS === 'ios')
+                          setFieldValue('dob', selectedDate || values.dob)
+                        }}
+                      />
+                    )}
+
+                    <Picker
+                      selectedValue={values.gender}
+                      onValueChange={(itemValue, itemIndex) =>
+                        setFieldValue('gender', itemValue)
+                      }
                       style={GlobalStyles.input}
-                      onChangeText={handleChange('dob')}
-                      onBlur={handleBlur('dob')}
-                      value={values.dob}
-                      placeholder='Date of Birth'
-                    />
-                    {touched.dob && errors.dob && (
-                      <Text style={styles.errorText}>{errors.dob}</Text>
-                    )}
-                    <TextInput
-                      style={GlobalStyles.input}
-                      onChangeText={handleChange('gender')}
-                      onBlur={handleBlur('gender')}
-                      value={values.gender}
-                      placeholder='Gender'
-                    />
-                    {touched.gender && errors.gender && (
-                      <Text style={styles.errorText}>{errors.gender}</Text>
-                    )}
-                    <Button title='Save Profile' onPress={handleSubmit} />
+                    >
+                      <Picker.Item label='Male' value='male' />
+                      <Picker.Item label='Female' value='female' />
+                      {/* Add more genders as needed */}
+                    </Picker>
+                    <TouchableOpacity
+                      onPress={handleSubmit}
+                      style={GlobalStyles.button}
+                    >
+                      <Text style={GlobalStyles.buttonText}>Save Profile</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               )}
@@ -236,12 +288,13 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginBottom: 20,
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    width: '80%',
+
+  formContainer: {
+    width: '100%',
+    gap: RFValue(20),
+  },
+  profileContainer: {
+    width: '100%',
   },
 })
 

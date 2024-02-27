@@ -149,7 +149,6 @@ export default function App() {
 
   useFirebaseAuthState()
   const { isAuthenticated, user } = useAuthStore()
-  console.log(user)
 
   useEffect(() => {
     async function prepare() {

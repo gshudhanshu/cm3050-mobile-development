@@ -1,11 +1,20 @@
+import React from 'react'
 import { db, storage } from '../firebase/firebase.js'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
 
-export const uploadProfilePicture = async (userId, imageBlob) => {
+const uriToBlob = async (uri) => {
+  const response = await fetch(uri)
+  const blob = await response.blob()
+  return blob
+}
+
+export const uploadProfilePicture = async (userId, uri) => {
+  const blob = await uriToBlob(uri)
   const storageRef = ref(storage, `profilePictures/${userId}`)
-  await uploadBytes(storageRef, imageBlob)
-  return getDownloadURL(storageRef)
+  await uploadBytes(storageRef, blob)
+  const url = await getDownloadURL(storageRef)
+  return url
 }
 
 export const saveUserProfile = async (userId, profileData) => {

@@ -36,7 +36,6 @@ export default function HomeScreen() {
           <Header
             showBack={false}
             isHome={true}
-            avatarUrl='https://placehold.co/50x50.png'
             onAvatarPress={() => setIsSettingsModalVisible(true)}
           />
           {/* Welcome */}

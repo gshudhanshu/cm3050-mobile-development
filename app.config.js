@@ -30,7 +30,17 @@ export default {
     web: {
       favicon: './assets/favicon.png',
     },
-    plugins: ['expo-font', '@react-native-google-signin/google-signin'],
+    plugins: [
+      'expo-font',
+      [
+        'expo-image-picker',
+        {
+          photosPermission:
+            'The app accesses your photos to let you set profile picture.',
+        },
+      ],
+      '@react-native-google-signin/google-signin',
+    ],
     extra: {
       eas: {
         projectId: 'bfba65c3-f136-48b2-a73f-595992ec1def',
