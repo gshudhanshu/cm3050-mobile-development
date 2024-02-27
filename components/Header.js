@@ -7,7 +7,7 @@ import BackIcon from '../assets/back-icon'
 import theme from '../utils/theme'
 import CText from './common/CText'
 
-const Header = ({ showBack, title, isHome, avatarUrl, onAvatarPress }) => {
+const Header = ({ showBack, title, isHome, avatarUrl }) => {
   const navigation = useNavigation()
 
   return (
@@ -34,7 +34,10 @@ const Header = ({ showBack, title, isHome, avatarUrl, onAvatarPress }) => {
         <CText style={styles.screenTitle}>{title}</CText>
       )}
 
-      <TouchableOpacity onPress={onAvatarPress} style={styles.iconButton}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Profile')}
+        style={styles.iconButton}
+      >
         <Image
           source={{ uri: avatarUrl }}
           style={[styles.avatar, styles.iconButton]}

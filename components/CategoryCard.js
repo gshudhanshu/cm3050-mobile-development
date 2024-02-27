@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
-    height: 150,
+    height: 200,
     width: '100%',
   },
   backgroundImage: {
@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'space-between',
     padding: RFValue(12),
-    flexDirection: 'row',
   },
   titleText: {
     fontSize: theme.fonts.sizes.h6,

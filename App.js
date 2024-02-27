@@ -24,6 +24,7 @@ import HomeScreen from './screens/HomeScreen'
 import SearchScreen from './screens/SearchScreen'
 import JournalScreen from './screens/JournalScreen'
 import ProgressScreen from './screens/ProgressScreen'
+import ProfileScreen from './screens/ProfileScreen'
 
 import HomeIcon from './assets/home-icon'
 import SearchIcon from './assets/search-icon'
@@ -168,7 +169,10 @@ export default function App() {
     <NavigationContainer>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isAuthenticated ? (
-          <RootStack.Screen name='MainApp' component={MainAppFlow} />
+          <>
+            <RootStack.Screen name='MainApp' component={MainAppFlow} />
+            <RootStack.Screen name='Profile' component={ProfileScreen} />
+          </>
         ) : (
           <RootStack.Screen name='Auth' component={AuthFlow} />
         )}
