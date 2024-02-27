@@ -27,7 +27,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={GlobalStyles.safeAreaContainer}>
-      <ScrollView>
+      <ScrollView style={{ marginBottom: RFValue(80) }}>
         <StatusBar
           barStyle='light-content'
           backgroundColor={theme.colors.primary}
@@ -83,12 +83,12 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           {/* Trending sessions */}
-          <View>
-            <View style={styles.blockContainer}>
-              <CText weight='semiBold' style={styles.blockTitle}>
+          <View style={styles.container}>
+            <View style={GlobalStyles.blockContainer}>
+              <CText weight='semiBold' style={GlobalStyles.blockTitle}>
                 Trending
               </CText>
-              <CText style={styles.blockSubTitle}>24 sessions</CText>
+              <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
             </View>
             <ScrollView directionalLockEnabled={'false'} horizontal={true}>
               <View style={styles.sessionsContainer}>
@@ -111,14 +111,13 @@ export default function HomeScreen() {
               </View>
             </ScrollView>
           </View>
-
           {/* Trending sessions */}
-          <View>
-            <View style={styles.blockContainer}>
-              <CText weight='semiBold' style={styles.blockTitle}>
-                Trending
+          <View style={styles.container}>
+            <View style={GlobalStyles.blockContainer}>
+              <CText weight='semiBold' style={GlobalStyles.blockTitle}>
+                Recommended
               </CText>
-              <CText style={styles.blockSubTitle}>25 sessions</CText>
+              <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
             </View>
             <ScrollView directionalLockEnabled={'false'} horizontal={true}>
               <View style={styles.sessionsContainer}>
@@ -150,6 +149,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-start',
+    flex: 1,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -203,23 +203,6 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     paddingVertical: RFValue(6),
     paddingHorizontal: RFValue(15),
-  },
-
-  blockContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: RFValue(15),
-  },
-
-  blockTitle: {
-    fontSize: theme.fonts.sizes.h5,
-    color: theme.colors.white,
-  },
-
-  blockSubTitle: {
-    fontSize: theme.fonts.sizes.body,
-    color: theme.colors.grayLight,
   },
   sessionsContainer: {
     flexDirection: 'row',

@@ -4,6 +4,8 @@ import Logo from '../assets/logo'
 import GlobalStyles from '../utils/GlobalStyles'
 import { RFValue } from 'react-native-responsive-fontsize'
 import BackIcon from '../assets/back-icon'
+import theme from '../utils/theme'
+import CText from './common/CText'
 
 const Header = ({ showBack, title, isHome, avatarUrl, onAvatarPress }) => {
   const navigation = useNavigation()
@@ -29,7 +31,7 @@ const Header = ({ showBack, title, isHome, avatarUrl, onAvatarPress }) => {
       {isHome ? (
         <Logo style={GlobalStyles.logo} />
       ) : (
-        <Text style={styles.screenTitle}>{title}</Text>
+        <CText style={styles.screenTitle}>{title}</CText>
       )}
 
       <TouchableOpacity onPress={onAvatarPress} style={styles.iconButton}>
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
   },
   screenTitle: {
     fontSize: RFValue(20),
-    fontWeight: 'bold',
+    color: theme.colors.white,
   },
   avatar: {
     borderRadius: RFValue(50),

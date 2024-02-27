@@ -101,6 +101,7 @@ const MainAppFlow = () => (
       name='Search'
       component={SearchScreen}
       options={{
+        headerShown: false,
         tabBarLabel: 'Search',
         tabBarIcon: ({ color, size, focused }) => (
           <View style={focused ? styles.activeTabStyle : null}>

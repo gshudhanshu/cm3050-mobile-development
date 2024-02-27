@@ -54,6 +54,23 @@ const GlobalStyles = StyleSheet.create({
     color: theme.colors.primary,
     fontSize: theme.fonts.sizes.body,
   },
+
+  blockContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: RFValue(15),
+  },
+
+  blockTitle: {
+    fontSize: theme.fonts.sizes.h5,
+    color: theme.colors.white,
+  },
+
+  blockSubTitle: {
+    fontSize: theme.fonts.sizes.body,
+    color: theme.colors.grayLight,
+  },
 })
 
 export default GlobalStyles
