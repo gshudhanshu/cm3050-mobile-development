@@ -7,7 +7,7 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, LogBox } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -21,16 +21,24 @@ import LoginScreen from './screens/LoginScreen'
 import SignupScreen from './screens/SignupScreen'
 import ForgetPasswordScreen from './screens/ForgetPasswordScreen'
 import HomeScreen from './screens/HomeScreen'
-import SearchScreen from './screens/SearchScreen'
 import JournalScreen from './screens/JournalScreen'
 import ProgressScreen from './screens/ProgressScreen'
 import ProfileScreen from './screens/ProfileScreen'
+
+import SearchScreen from './screens/SearchScreen'
+import CategoryScreen from './screens/CategoryScreen'
+import PlayerScreen from './screens/PlayerScreen'
 
 import HomeIcon from './assets/home-icon'
 import SearchIcon from './assets/search-icon'
 import JournalIcon from './assets/journal-icon'
 import ProgressIcon from './assets/progress-icon'
 import { RFValue } from 'react-native-responsive-fontsize'
+
+LogBox.ignoreLogs([
+  '`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.',
+  '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.',
+])
 
 SplashScreen.preventAutoHideAsync()
 
@@ -50,6 +58,7 @@ const config = {
 const AuthStack = createStackNavigator()
 const MainTab = createBottomTabNavigator()
 const RootStack = createStackNavigator()
+const SearchStack = createStackNavigator()
 
 const AuthFlow = () => (
   <AuthStack.Navigator>
@@ -62,6 +71,17 @@ const AuthFlow = () => (
     <AuthStack.Screen name='Signup' component={SignupScreen} />
     <AuthStack.Screen name='ForgetPassword' component={ForgetPasswordScreen} />
   </AuthStack.Navigator>
+)
+
+const SearchStackScreen = () => (
+  <SearchStack.Navigator
+    initialRouteName='Search'
+    screenOptions={{ headerShown: false }}
+  >
+    <SearchStack.Screen name='Search' component={SearchScreen} />
+    <SearchStack.Screen name='Category' component={CategoryScreen} />
+    <SearchStack.Screen name='Player' component={PlayerScreen} />
+  </SearchStack.Navigator>
 )
 
 const MainAppFlow = () => (
@@ -99,8 +119,8 @@ const MainAppFlow = () => (
       }}
     />
     <MainTab.Screen
-      name='Search'
-      component={SearchScreen}
+      name='SearchTab'
+      component={SearchStackScreen}
       options={{
         headerShown: false,
         tabBarLabel: 'Search',

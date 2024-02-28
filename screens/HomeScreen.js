@@ -35,7 +35,7 @@ export default function HomeScreen() {
         <View style={[GlobalStyles.container, styles.container]}>
           <Header
             showBack={false}
-            isHome={true}
+            useLogo={true}
             onAvatarPress={() => setIsSettingsModalVisible(true)}
           />
           {/* Welcome */}

@@ -124,7 +124,7 @@ const ProfileScreen = () => {
         <View style={[GlobalStyles.container, styles.container]}>
           <Header
             showBack={true}
-            isHome={true}
+            useLogo={true}
             onAvatarPress={() => setIsSettingsModalVisible(true)}
           />
           <View style={styles.profileContainer}>

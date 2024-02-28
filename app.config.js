@@ -39,6 +39,13 @@ export default {
             'The app accesses your photos to let you set profile picture.',
         },
       ],
+      [
+        'expo-av',
+        {
+          microphonePermission:
+            'Allow $(PRODUCT_NAME) to access your microphone.',
+        },
+      ],
       '@react-native-google-signin/google-signin',
     ],
     extra: {

@@ -13,7 +13,14 @@ import SpeakerIcon from '../assets/speaker-icon'
 import ClockIcon from '../assets/clock-icon'
 import CText from './common/CText'
 
-const SessionCard = ({ imageUrl, level, title, type, duration, onPress }) => {
+const SessionCard = ({
+  imageUrl,
+  level,
+  title,
+  type,
+  duration = 0,
+  onPress,
+}) => {
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       <ImageBackground
@@ -46,12 +53,14 @@ const SessionCard = ({ imageUrl, level, title, type, duration, onPress }) => {
               </CText>
               <View style={styles.sessionDetails}>
                 <View style={styles.sessionTypeContainer}>
-                  <SpeakerIcon fill={theme.colors.white} />
+                  <SpeakerIcon stroke={theme.colors.white} width={15} />
                   <CText style={styles.sessionTypeText}>{type}</CText>
                 </View>
                 <View style={styles.sessionDurationContainer}>
-                  <ClockIcon fill={theme.colors.white} />
-                  <CText style={styles.sessionDurationText}>{duration}</CText>
+                  <ClockIcon stroke={theme.colors.white} width={15} />
+                  <CText style={styles.sessionDurationText}>
+                    {duration} sec
+                  </CText>
                 </View>
               </View>
             </BlurView>
@@ -72,7 +81,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     height: RFValue(200),
-    width: RFValue(170),
   },
   cardBackgroundImage: {
     width: '100%',
@@ -117,10 +125,12 @@ const styles = StyleSheet.create({
     fontSize: theme.fonts.sizes.body,
     color: theme.colors.white,
     marginRight: RFValue(6),
+    marginTop: RFValue(2),
   },
   sessionDurationText: {
     fontSize: theme.fonts.sizes.body,
     color: theme.colors.white,
+    marginTop: RFValue(2),
   },
   sessionTypeContainer: {
     flexDirection: 'row',

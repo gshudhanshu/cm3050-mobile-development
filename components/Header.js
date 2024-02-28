@@ -11,7 +11,7 @@ import CText from './common/CText'
 import useAuthStore from '../store/useAuthStore'
 import { getUserProfile } from '../utils/userProfileUtils'
 
-const Header = ({ showBack, title, isHome }) => {
+const Header = ({ showBack, title, useLogo }) => {
   const navigation = useNavigation()
   const { user, setUserProfile, profile } = useAuthStore()
 
@@ -50,7 +50,7 @@ const Header = ({ showBack, title, isHome }) => {
           </TouchableOpacity>
         )}
       </View>
-      {isHome ? (
+      {useLogo ? (
         <Logo style={GlobalStyles.logo} />
       ) : (
         <CText style={styles.screenTitle}>{title}</CText>

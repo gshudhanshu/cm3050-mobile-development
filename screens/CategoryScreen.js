@@ -12,65 +12,74 @@ import {
   FlatList,
 } from 'react-native'
 import React, { useEffect } from 'react'
-import { useIsFocused } from '@react-navigation/native'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Header from '../components/Header'
 import CText from '../components/common/CText'
-import CategoryCard from '../components/CategoryCard'
-import { useNavigation } from '@react-navigation/native'
-
+import SessionCard from '../components/SessionCard'
+import { useNavigation, useIsFocused } from '@react-navigation/native'
 import useContentStore from '../store/useContentStore'
 
-const categoriesData = [
+const sessionsData = [
+  // imageUrl, level, title, type, duration, onPress
   {
     id: '1',
     imageUrl:
       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Meditation',
-    numberOfSessions: 25,
+    level: 'Beginner',
+    type: 'Guided',
+    duration: 25,
+    title: 'Meditation',
   },
   {
     id: '2',
     imageUrl:
       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
+    level: 'Beginner',
+    type: 'Guided',
+    duration: 25,
+    title: 'Meditation',
   },
   {
     id: '3',
     imageUrl:
       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
+    level: 'Beginner',
+    type: 'Guided',
+    duration: 25,
+    title: 'Meditation',
   },
   {
     id: '4',
     imageUrl:
       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
+    level: 'Beginner',
+    type: 'Guided',
+    duration: 25,
+    title: 'Meditation',
   },
   {
     id: '5',
     imageUrl:
       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
+    level: 'Beginner',
+    type: 'Guided',
+    duration: 25,
+    title: 'Meditation',
   },
-  // Add more categories as needed
 ]
 
-export default function SearchScreen() {
-  const { fetchCategories, categories } = useContentStore()
+export default function CategoryScreen({ route }) {
+  const { category } = route.params
+  const { fetchSessions, sessions } = useContentStore()
   const isFocused = useIsFocused()
   const navigation = useNavigation()
 
   useEffect(() => {
-    console.log('SearchScreen mounted')
-    fetchCategories()
-  }, [isFocused])
+    fetchSessions(category)
+  }, [isFocused, category])
+
   const renderCategoryCard = (item, index) => (
     <View
       key={item.id}
@@ -79,13 +88,14 @@ export default function SearchScreen() {
         index % 2 !== 0 && styles.categoryCardRight,
       ]}
     >
-      <CategoryCard
-        imageUrl={item.imageUrl}
-        category={item.category}
-        numberOfSessions={item.sessionCount}
-        onPress={() =>
-          navigation.navigate('Category', { category: item.category })
-        }
+      {/* imageUrl, level, title, type, duration, onPress */}
+      <SessionCard
+        imageUrl={item.thumbnailUrl}
+        level={item.level}
+        title={item.title}
+        type={item.type}
+        duration={item.duration}
+        onPress={() => navigation.navigate('Player', { session: item })}
       />
     </View>
   )
@@ -98,12 +108,7 @@ export default function SearchScreen() {
             barStyle='light-content'
             backgroundColor={theme.colors.primary}
           />
-          <Header
-            showBack={false}
-            useLogo={false}
-            title={'Search'}
-            onAvatarPress={() => {}}
-          />
+          <Header showBack={true} useLogo={false} title={'Search'} />
           {/* Search input */}
           <View style={styles.searchInputContainer}>
             <TextInput placeholder='Search...' style={[GlobalStyles.input]} />
@@ -112,11 +117,11 @@ export default function SearchScreen() {
           <View style={styles.categoriesContainer}>
             <View style={GlobalStyles.blockContainer}>
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
-                Browse by category
+                Browse by sessions
               </CText>
             </View>
             <View style={styles.categoriesGrid}>
-              {categories.map(renderCategoryCard)}
+              {sessions.map(renderCategoryCard)}
             </View>
           </View>
         </ScrollView>
