@@ -42,7 +42,7 @@ export default function PlayerScreen({ route }) {
   const [currentInstruction, setCurrentInstruction] =
     useState('No Instructions')
 
-  const [spokenInstructions, setSpokenInstructions] = useState(new Set())
+  const spokenInstructionsRef = useRef(new Set())
   const isFocused = useIsFocused()
 
   useEffect(() => {
@@ -50,9 +50,11 @@ export default function PlayerScreen({ route }) {
       loadAudio()
     } else {
       unloadAudio()
+      spokenInstructionsRef.current = new Set()
     }
     return () => {
       unloadAudio()
+      spokenInstructionsRef.current = new Set()
     }
   }, [session, isFocused])
 
@@ -90,7 +92,8 @@ export default function PlayerScreen({ route }) {
     if (playbackStatus.isPlaying) {
       await sound.pauseAsync()
     } else {
-      if (playbackStatus.didJustFinish) {
+      if (playbackStatus.didJustFinish || playbackStatus.positionMillis === 0) {
+        spokenInstructionsRef.current.clear()
         await sound.setPositionAsync(0)
       }
       await sound.playAsync()
@@ -98,8 +101,13 @@ export default function PlayerScreen({ route }) {
   }
 
   const seekAudio = async (value) => {
-    const position = value * playbackStatus.durationMillis
-    await sound.setPositionAsync(position)
+    const newPositionMillis = value * playbackStatus.durationMillis
+    await sound.setPositionAsync(newPositionMillis)
+    spokenInstructionsRef.current = new Set(
+      [...spokenInstructionsRef.current].filter(
+        (time) => time * 1000 < newPositionMillis
+      )
+    )
   }
 
   const formatTime = (milliseconds) => {
@@ -112,22 +120,22 @@ export default function PlayerScreen({ route }) {
   const checkAndSpeakInstructions = (positionMillis) => {
     const currentTimeInSeconds = positionMillis / 1000
     session.instructions.forEach((instruction) => {
+      // Check if the current time has passed the instruction time and if it hasn't been spoken yet
       if (
         currentTimeInSeconds >= instruction.time &&
-        !spokenInstructions.has(instruction.time)
+        !spokenInstructionsRef.current.has(instruction.time)
       ) {
         if (!isMuted) {
-          console.log('Spoken instructions:', instruction.text)
+          console.log('Speaking instruction:', instruction.text)
           Speech.speak(instruction.text, {
             rate: 0.75,
             pitch: 1.0,
             volume: 1,
           })
+          // Add the instruction time to the set to mark it as spoken
+          spokenInstructionsRef.current.add(instruction.time)
+          setCurrentInstruction(instruction.text)
         }
-        setSpokenInstructions(
-          (prevInstructions) => new Set(prevInstructions.add(instruction.time))
-        )
-        setCurrentInstruction(instruction.text)
       }
     })
   }
