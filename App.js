@@ -135,6 +135,7 @@ const MainAppFlow = () => (
       name='Journal'
       component={JournalScreen}
       options={{
+        headerShown: false,
         tabBarLabel: 'Journal',
         tabBarIcon: ({ color, size, focused }) => (
           <View style={focused ? styles.activeTabStyle : null}>
