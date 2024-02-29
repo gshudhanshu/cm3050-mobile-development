@@ -10,11 +10,12 @@ import {
   Image,
   LogBox,
   Platform,
+  Alert,
 } from 'react-native'
 import Slider from '@react-native-community/slider'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Audio } from 'expo-av'
-// import { Speech } from 'expo-speech'
+import * as Speech from 'expo-speech'
 
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import theme from '../utils/theme'
@@ -37,34 +38,61 @@ export default function PlayerScreen({ route }) {
   const [playbackStatus, setPlaybackStatus] = useState({})
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
+  const instructionTimeouts = useRef([])
+  const [currentInstruction, setCurrentInstruction] =
+    useState('No Instructions')
+
+  const [spokenInstructions, setSpokenInstructions] = useState(new Set())
+  const isFocused = useIsFocused()
 
   useEffect(() => {
-    loadAudio()
-    return sound
-      ? () => {
-          sound.unloadAsync()
-        }
-      : undefined
-  }, [session])
+    if (isFocused) {
+      loadAudio()
+    } else {
+      unloadAudio()
+    }
+    return () => {
+      unloadAudio()
+    }
+  }, [session, isFocused])
 
   const loadAudio = async () => {
+    if (sound) {
+      await unloadAudio()
+    }
     const { sound: newSound } = await Audio.Sound.createAsync(
       { uri: session.audioUrl },
-      { shouldPlay: true },
+      { shouldPlay: false },
       handleAudioPlaybackStatusUpdate
     )
     setSound(newSound)
   }
 
+  const unloadAudio = async () => {
+    if (sound) {
+      await sound.unloadAsync()
+      setSound(null)
+    }
+  }
+
   const handleAudioPlaybackStatusUpdate = (status) => {
     setPlaybackStatus(status)
     setIsPlaying(status.isPlaying)
+    if (status.isPlaying) {
+      checkAndSpeakInstructions(status.positionMillis)
+    }
   }
 
   const playPauseAudio = async () => {
-    if (isPlaying) {
+    if (!sound) {
+      Alert.alert('Error', 'Audio not loaded, wait few seconds and try again.')
+    }
+    if (playbackStatus.isPlaying) {
       await sound.pauseAsync()
     } else {
+      if (playbackStatus.didJustFinish) {
+        await sound.setPositionAsync(0)
+      }
       await sound.playAsync()
     }
   }
@@ -81,14 +109,26 @@ export default function PlayerScreen({ route }) {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
 
-  const speakInstructions = () => {
-    const instructionsText = session.instructions
-      .map((inst) => inst.text)
-      .join(', ')
-    Speech.speak(instructionsText, {
-      rate: 0.75,
-      pitch: 1.0,
-      volume: isMuted ? 0 : 1,
+  const checkAndSpeakInstructions = (positionMillis) => {
+    const currentTimeInSeconds = positionMillis / 1000
+    session.instructions.forEach((instruction) => {
+      if (
+        currentTimeInSeconds >= instruction.time &&
+        !spokenInstructions.has(instruction.time)
+      ) {
+        if (!isMuted) {
+          console.log('Spoken instructions:', instruction.text)
+          Speech.speak(instruction.text, {
+            rate: 0.75,
+            pitch: 1.0,
+            volume: 1,
+          })
+        }
+        setSpokenInstructions(
+          (prevInstructions) => new Set(prevInstructions.add(instruction.time))
+        )
+        setCurrentInstruction(instruction.text)
+      }
     })
   }
 
@@ -99,8 +139,8 @@ export default function PlayerScreen({ route }) {
           barStyle='light-content'
           backgroundColor={theme.colors.primary}
         />
-        <Header showBack={true} useLogo={false} title={'Player'} />
-        <View style={GlobalStyles.container}>
+        <View style={[GlobalStyles.container, styles.container]}>
+          <Header showBack={true} useLogo={false} title={'Player'} />
           <Image
             source={{ uri: session.thumbnailUrl }}
             style={styles.thumbnail}
@@ -156,7 +196,7 @@ export default function PlayerScreen({ route }) {
             </TouchableOpacity>
           </View>
           <View style={styles.instructionsContainer}>
-            <Text style={styles.instructionsText}>{'Instructions'}</Text>
+            <Text style={styles.instructionsText}>{currentInstruction}</Text>
             <TouchableOpacity
               onPress={() => setIsMuted(!isMuted)}
               style={styles.muteButton}
@@ -184,9 +224,10 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     width: '100%',
-    height: RFValue(250),
+    height: RFValue(225),
     resizeMode: 'cover',
     borderRadius: RFValue(20),
+    marginTop: RFValue(20),
   },
 
   sessionInfoContainer: {
