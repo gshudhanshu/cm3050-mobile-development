@@ -148,6 +148,7 @@ const MainAppFlow = () => (
       name='Progress'
       component={ProgressScreen}
       options={{
+        headerShown: false,
         tabBarLabel: 'Progress',
         tabBarIcon: ({ color, size, focused }) => (
           <View style={focused ? styles.activeTabStyle : null}>

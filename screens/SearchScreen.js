@@ -98,12 +98,7 @@ export default function SearchScreen() {
             barStyle='light-content'
             backgroundColor={theme.colors.primary}
           />
-          <Header
-            showBack={false}
-            useLogo={false}
-            title={'Search'}
-            onAvatarPress={() => {}}
-          />
+          <Header showBack={false} useLogo={false} title={'Search'} />
           {/* Search input */}
           <View style={styles.searchInputContainer}>
             <TextInput placeholder='Search...' style={[GlobalStyles.input]} />

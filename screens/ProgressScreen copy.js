@@ -11,11 +11,10 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import { TabView, SceneMap } from 'react-native-tab-view'
-import { PieChart, BarChart } from 'react-native-gifted-charts'
+import { PieChart, BarChart, ProgressChart } from 'react-native-chart-kit'
 
 import Header from '../components/Header'
 import CText from '../components//common/CText'
-import SessionCard from '../components/SessionCard'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
@@ -23,107 +22,70 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { useNavigation } from '@react-navigation/native'
 import useContentStore from '../store/useContentStore'
 import useAuthStore from '../store/useAuthStore'
-import DayComponent from '../components/progress-tabs/DayComponent'
 
 //
+// Dummy data for charts
+const chartConfig = {
+  backgroundGradientFrom: '#1E2923',
+  backgroundGradientFromOpacity: 0,
+  backgroundGradientTo: '#08130D',
+  backgroundGradientToOpacity: 0.5,
+  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+  strokeWidth: 2, // optional, default 3
+  barPercentage: 0.5,
+  useShadowColorFromDataset: false, // optional
+}
 
-const pieData = [
+const data = [
   {
-    value: 47,
-    color: '#009FFF',
-    gradientCenterColor: '#006DFF',
-    focused: true,
+    name: 'Min',
+    goal: 60,
+    color: 'rgba(131, 167, 234, 1)',
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 15,
   },
-  { value: 40, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
+  {
+    name: 'Min',
+    goal: 40,
+    color: '#F00',
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 15,
+  },
 ]
+
+const barData = {
+  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  datasets: [
+    {
+      data: [20, 45, 28, 80, 99, 43, 50],
+    },
+  ],
+}
 
 const FirstRoute = () => (
   <View
     style={{
       flex: 1,
-      // backgroundColor: theme.colors.grayDark,
+      backgroundColor: theme.colors.grayDark,
       alignItems: 'center',
-      // justifyContent: 'center',
+      justifyContent: 'center',
     }}
   >
     <PieChart
-      data={pieData}
-      donut
-      showGradient
-      sectionAutoFocus
-      radius={90}
-      innerRadius={60}
-      innerCircleColor={'#232B5D'}
-      centerLabelComponent={() => {
-        return (
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
-              47%
-            </Text>
-            {/* <Text style={{ fontSize: 14, color: 'white' }}>Excellent</Text> */}
-          </View>
-        )
-      }}
+      data={data}
+      width={300}
+      height={200}
+      chartConfig={chartConfig}
+      accessor={'goal'}
+      backgroundColor={'transparent'}
+      paddingLeft={'15'}
+      center={[10, 10]}
+      absolute
     />
 
     {/* Add your components for daily completed sessions and editable daily goal here */}
-    <View>
-      {/* Trending sessions */}
-      <View style={styles.container}>
-        <View style={GlobalStyles.blockContainer}>
-          <CText weight='semiBold' style={GlobalStyles.blockTitle}>
-            Trending
-          </CText>
-          <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
-        </View>
-        <ScrollView directionalLockEnabled={'false'} horizontal={true}>
-          <View style={styles.sessionsContainer}>
-            <SessionCard
-              imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
-              level='Beginner'
-              title='On the Beach'
-              type='Guided'
-              duration='25 min'
-              onPress={() => {}}
-            />
-            <SessionCard
-              imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
-              level='Beginner'
-              title='On the Beach'
-              type='Guided'
-              duration='25 min'
-              onPress={() => {}}
-            />
-          </View>
-          {/* Set daily goal use a modal for edit */}
-          <View style={styles.quoteContainer}>
-            <View style={styles.quoteSubContainer}>
-              <CText weight='light' style={styles.todayQuote}>
-                My daily goal
-              </CText>
-              <CText numberOfLines={1} weight='semiBold' style={styles.Quote}>
-                10 minutes
-              </CText>
-            </View>
-            <TouchableOpacity style={[GlobalStyles.button, styles.viewButton]}>
-              <CText style={[GlobalStyles.buttonText]}>Edit</CText>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </View>
-    </View>
   </View>
 )
-
-const barData = [
-  { value: 250, label: 'M' },
-  { value: 500, label: 'T', frontColor: '#177AD5' },
-  { value: 745, label: 'W', frontColor: '#177AD5' },
-  { value: 320, label: 'T' },
-  { value: 600, label: 'F', frontColor: '#177AD5' },
-  { value: 256, label: 'S' },
-  { value: 300, label: 'S' },
-]
 
 const SecondRoute = () => (
   <View
@@ -135,67 +97,33 @@ const SecondRoute = () => (
     }}
   >
     <BarChart
-      barWidth={15}
-      noOfSections={3}
-      barBorderRadius={4}
-      frontColor='lightgray'
       data={barData}
-      yAxisThickness={0}
-      xAxisThickness={0}
+      width={300}
+      height={220}
+      yAxisLabel=''
+      chartConfig={chartConfig}
+      verticalLabelRotation={30}
     />
     {/* Add your components for weekly stats here */}
   </View>
 )
-
-const barMonthData = [
-  { value: 250, label: 'M' },
-  { value: 500, label: 'T', frontColor: '#177AD5' },
-  { value: 745, label: 'W', frontColor: '#177AD5' },
-  { value: 320, label: 'T' },
-  { value: 600, label: 'F', frontColor: '#177AD5' },
-  { value: 256, label: 'S' },
-  { value: 300, label: 'S' },
-  { value: 250, label: 'M' },
-  { value: 500, label: 'T', frontColor: '#177AD5' },
-  { value: 745, label: 'W', frontColor: '#177AD5' },
-  { value: 320, label: 'T' },
-  { value: 600, label: 'F', frontColor: '#177AD5' },
-  { value: 256, label: 'S' },
-  { value: 300, label: 'S' },
-  { value: 250, label: 'M' },
-  { value: 500, label: 'T', frontColor: '#177AD5' },
-  { value: 745, label: 'W', frontColor: '#177AD5' },
-  { value: 320, label: 'T' },
-  { value: 600, label: 'F', frontColor: '#177AD5' },
-  { value: 256, label: 'S' },
-  { value: 300, label: 'S' },
-  { value: 250, label: 'M' },
-  { value: 500, label: 'T', frontColor: '#177AD5' },
-  { value: 745, label: 'W', frontColor: '#177AD5' },
-  { value: 320, label: 'T' },
-  { value: 600, label: 'F', frontColor: '#177AD5' },
-  { value: 256, label: 'S' },
-  { value: 300, label: 'S' },
-]
-
 const ThirdRoute = () => (
   <View
     style={{
       flex: 1,
-      backgroundColor: '#673ab7',
+      backgroundColor: theme.colors.primary,
       alignItems: 'center',
       justifyContent: 'center',
     }}
   >
+    {/* Monthly chart similar to weekly */}
     <BarChart
-      barWidth={5}
-      noOfSections={3}
-      barBorderRadius={4}
-      frontColor='lightgray'
-      data={barMonthData}
-      yAxisThickness={0}
-      xAxisThickness={0}
-      spacing={5}
+      data={barData}
+      width={300}
+      height={220}
+      yAxisLabel=''
+      chartConfig={chartConfig}
+      verticalLabelRotation={30}
     />
     {/* Add your components for monthly stats here */}
   </View>
@@ -276,14 +204,11 @@ export default function ProgressScreen() {
               <View style={styles.tabContainer}>
                 <TabView
                   navigationState={{ index, routes }}
-                  renderScene={() => null}
+                  renderScene={renderScene}
                   onIndexChange={setIndex}
                   // initialLayout={{ width: layout.width }}
                   style={styles.tabView}
                 />
-                {index === 0 && <DayComponent />}
-                {index === 1 && <SecondRoute />}
-                {index === 2 && <ThirdRoute />}
               </View>
             </View>
           </View>
@@ -352,12 +277,7 @@ const styles = StyleSheet.create({
   },
   tabView: {
     marginTop: RFValue(10),
-    height: RFValue(80),
+    height: RFValue(300),
     flex: 1,
-  },
-  sessionsContainer: {
-    flexDirection: 'row',
-    width: '100%',
-    gap: RFValue(15),
   },
 })

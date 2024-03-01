@@ -44,7 +44,6 @@ const useContentStore = create((set) => ({
       id: doc.id,
       ...doc.data(),
     }))
-    console.log('Fetched sessions:', sessions)
     set({ sessions })
   },
   // fetch single session using its id
