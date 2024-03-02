@@ -15,69 +15,6 @@ dayjs.extend(customParseFormat)
 dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 
-// const barData = [
-//   {
-//     value: 250,
-//     label: '1',
-//     labelTextStyle: { color: theme.colors.grayMedium },
-//   },
-//   {
-//     value: 250,
-//   },
-//   { value: 500 },
-//   { value: 745 },
-//   {
-//     value: 320,
-//     label: '5',
-//     labelTextStyle: { color: theme.colors.grayMedium },
-//   },
-//   { value: 600 },
-//   { value: 256 },
-//   { value: 300 },
-//   { value: 250 },
-//   {
-//     value: 500,
-//     label: '10',
-//     labelTextStyle: { color: theme.colors.grayMedium },
-//   },
-//   { value: 745 },
-//   { value: 320 },
-//   { value: 600 },
-//   { value: 256 },
-//   {
-//     value: 300,
-//     label: '15',
-//     labelTextStyle: { color: theme.colors.grayMedium },
-//   },
-//   { value: 250 },
-//   { value: 500 },
-//   { value: 745 },
-//   { value: 320 },
-//   {
-//     value: 600,
-//     label: '20',
-//     labelTextStyle: { color: theme.colors.grayMedium },
-//   },
-//   { value: 256 },
-//   { value: 300 },
-//   { value: 250 },
-//   { value: 500 },
-//   {
-//     value: 745,
-//     label: '25',
-//     labelTextStyle: { color: theme.colors.grayMedium },
-//   },
-//   { value: 320 },
-//   { value: 600 },
-//   { value: 256 },
-//   { value: 300 },
-//   {
-//     value: 300,
-//     label: '30',
-//     labelTextStyle: { color: theme.colors.grayMedium },
-//   },
-// ]
-
 export default function MonthComponent() {
   const { progress, percentageDifferences } = useContentStore()
   // Aggregate and prepare data for the past 30 days
@@ -97,7 +34,7 @@ export default function MonthComponent() {
     progress.forEach((session) => {
       const sessionDate = dayjs(session.date).format('YYYY-MM-DD')
       if (dateLabels.hasOwnProperty(sessionDate)) {
-        aggregatedData[dateLabels[sessionDate]].value += session.duration // Sum durations for the day
+        aggregatedData[dateLabels[sessionDate]].value += session.duration / 60 // Sum durations for the day
       }
     })
 

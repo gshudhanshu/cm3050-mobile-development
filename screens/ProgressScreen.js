@@ -59,7 +59,7 @@ export default function ProgressScreen() {
   }, [index])
 
   useEffect(() => {
-    if (user != null || profile != null) {
+    if (user !== null && profile !== null) {
       fetchProgressLast65DaysAndCalculateAverages(user.uid, profile.dailyGoal)
     }
   }, [user, profile, isFocused])
