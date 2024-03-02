@@ -24,6 +24,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import GlobalStyles from '../utils/GlobalStyles'
 import Header from '../components/Header'
 import useContentStore from '../store/useContentStore'
+import useAuthStore from '../store/useAuthStore'
 
 import PlayIcon from '../assets/play-icon'
 import PauseIcon from '../assets/pause-icon'
@@ -32,7 +33,16 @@ import ForwardIcon from '../assets/forward-icon'
 import SpeakerMuteIcon from '../assets/speaker-mute-icon'
 import SpeakerIcon from '../assets/speaker-icon'
 
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(customParseFormat)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('Europe/London')
+
 export default function PlayerScreen({ route }) {
+  const { addFinishedSession } = useContentStore()
+  const { user } = useAuthStore()
   const { session } = route.params
   const [sound, setSound] = useState(null)
   const [playbackStatus, setPlaybackStatus] = useState({})
@@ -82,6 +92,20 @@ export default function PlayerScreen({ route }) {
     setIsPlaying(status.isPlaying)
     if (status.isPlaying) {
       checkAndSpeakInstructions(status.positionMillis)
+    }
+
+    if (status.didJustFinish) {
+      // Assuming session includes necessary data like date and duration
+      const sessionData = {
+        date: dayjs(),
+        duration: status.durationMillis / 1000,
+        completed: true,
+        sessionId: session.id,
+      }
+
+      console.log(user)
+
+      addFinishedSession(user.uid, sessionData)
     }
   }
 

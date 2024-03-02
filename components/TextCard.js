@@ -1,30 +1,40 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native'
 import React from 'react'
 import theme from '../utils/theme'
 import CText from './common/CText'
 import GlobalStyles from '../utils/GlobalStyles'
 import { RFValue } from 'react-native-responsive-fontsize'
 
-export default function TextCard() {
+export default function TextCard({
+  title,
+  subTitle,
+  buttonTitle,
+  onButtonPress,
+}) {
   return (
-    <View style={styles.quoteContainer}>
-      <View style={styles.quoteSubContainer}>
-        <CText weight='light' style={styles.todayQuote}>
-          My daily goal
+    <View style={styles.cardContainer}>
+      <View style={styles.cardSubContainer}>
+        <CText weight='light' style={styles.cardTitle}>
+          {title}
         </CText>
-        <CText numberOfLines={1} weight='semiBold' style={styles.Quote}>
-          10 minutes
+        <CText numberOfLines={1} weight='semiBold' style={styles.cardSubTitle}>
+          {subTitle}
         </CText>
       </View>
-      <TouchableOpacity style={[GlobalStyles.button, styles.viewButton]}>
-        <CText style={[GlobalStyles.buttonText]}>Edit</CText>
-      </TouchableOpacity>
+      {buttonTitle && (
+        <TouchableOpacity
+          style={[GlobalStyles.button, styles.viewButton]}
+          onPress={onButtonPress}
+        >
+          <CText style={[GlobalStyles.buttonText]}>{buttonTitle}</CText>
+        </TouchableOpacity>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  quoteContainer: {
+  cardContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -36,17 +46,17 @@ const styles = StyleSheet.create({
     gap: RFValue(20),
   },
 
-  quoteSubContainer: {
+  cardSubContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     width: '60%',
   },
-  todayQuote: {
+  cardTitle: {
     fontSize: theme.fonts.sizes.body,
     color: theme.colors.primary,
   },
-  Quote: {
+  cardSubTitle: {
     fontSize: theme.fonts.sizes.h6,
     color: theme.colors.primary,
   },
