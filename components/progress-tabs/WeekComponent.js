@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { BarChart } from 'react-native-gifted-charts'
 import { RFValue } from 'react-native-responsive-fontsize'
@@ -6,6 +6,14 @@ import GlobalStyles from '../../utils/GlobalStyles'
 import theme from '../../utils/theme'
 import TextCard from '../TextCard'
 import CText from '../common/CText'
+import useContentStore from '../../store/useContentStore'
+
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(customParseFormat)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('Europe/London')
 
 const barData = [
   {
@@ -46,6 +54,33 @@ const barData = [
 ]
 
 export default function WeekComponent() {
+  const { progress, percentageDifferences } = useContentStore() // Access progress data from the store
+
+  // Use useMemo to transform progress data only when it changes
+  const barData = useMemo(() => {
+    const today = dayjs()
+    const startOfWeek = today.startOf('week')
+
+    // Initialize an object to hold aggregated durations for each day of the current week
+    const weekData = Array.from({ length: 7 }).map(() => ({
+      value: 0,
+      label: '',
+      labelTextStyle: { color: theme.colors.grayMedium },
+    }))
+
+    // Populate weekData with session durations
+    progress.forEach((session) => {
+      const sessionDay = dayjs(session.date)
+      if (sessionDay.isAfter(startOfWeek)) {
+        const dayIndex = sessionDay.day() // Sunday as 0 through Saturday as 6
+        weekData[dayIndex].value += session.duration / 60 // Aggregate durations
+        weekData[dayIndex].label = sessionDay.format('dd').charAt(0) // Set label as first character of day name
+      }
+    })
+
+    return weekData
+  }, [progress])
+
   return (
     <View style={styles.container}>
       <BarChart
@@ -71,15 +106,16 @@ export default function WeekComponent() {
               Weekly progress
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
-              On average, you completed 5% more sessions this week
+              On average, you completed {percentageDifferences.last7Days}% more
+              sessions this week
             </CText>
           </View>
         </View>
         {/* Set daily goal use a modal for edit */}
-        <TextCard
+        {/* <TextCard
           title='Longest steak this week'
           subTitle={'3 Days in a Row'}
-        />
+        /> */}
       </View>
     </View>
   )

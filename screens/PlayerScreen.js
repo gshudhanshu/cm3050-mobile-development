@@ -103,8 +103,6 @@ export default function PlayerScreen({ route }) {
         sessionId: session.id,
       }
 
-      console.log(user)
-
       addFinishedSession(user.uid, sessionData)
     }
   }

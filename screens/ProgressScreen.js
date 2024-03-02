@@ -17,7 +17,7 @@ import Header from '../components/Header'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
 
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Loading from '../components/common/Loading'
 import DayComponent from '../components/progress-tabs/DayComponent'
 import MonthComponent from '../components/progress-tabs/MonthComponent'
@@ -28,6 +28,8 @@ import useContentStore from '../store/useContentStore'
 export default function ProgressScreen() {
   const navigation = useNavigation()
   const { user, profile } = useAuthStore()
+  const { fetchProgressLast65DaysAndCalculateAverages } = useContentStore()
+  const isFocused = useIsFocused()
 
   const layout = useWindowDimensions()
 
@@ -55,6 +57,12 @@ export default function ProgressScreen() {
         setTabViewHeight(RFValue(650))
     }
   }, [index])
+
+  useEffect(() => {
+    if (user != null || profile != null) {
+      fetchProgressLast65DaysAndCalculateAverages(user.uid, profile.dailyGoal)
+    }
+  }, [user, profile, isFocused])
 
   if (profile === null) {
     return <Loading />
@@ -89,7 +97,7 @@ export default function ProgressScreen() {
               <View style={styles.statsContainer}>
                 <View style={styles.statsColumn}>
                   <CText weight='regular' style={styles.statsValue}>
-                    {user.longestStreak}
+                    {profile.longestStreak}
                   </CText>
                   <CText weight='semiBold' style={styles.statsTitle}>
                     Streak
@@ -97,7 +105,7 @@ export default function ProgressScreen() {
                 </View>
                 <View style={[styles.statsColumn, styles.sessionStatColumn]}>
                   <CText weight='regular' style={styles.statsValue}>
-                    {user.totalSessions}
+                    {profile.totalSessions}
                   </CText>
                   <CText weight='semiBold' style={styles.statsTitle}>
                     Sessions
@@ -105,7 +113,7 @@ export default function ProgressScreen() {
                 </View>
                 <View style={styles.statsColumn}>
                   <CText weight='regular' style={styles.statsValue}>
-                    {user.totalMinutes}
+                    {Math.floor(profile.totalSessionDuration / 60)}
                   </CText>
                   <CText weight='semiBold' style={styles.statsTitle}>
                     Min

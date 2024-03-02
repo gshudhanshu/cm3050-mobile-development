@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PieChart, BarChart } from 'react-native-gifted-charts'
 import theme from '../../utils/theme'
 import CText from '../common/CText'
@@ -17,25 +17,57 @@ import TextCard from '../TextCard'
 import GlobalStyles from '../../utils/GlobalStyles'
 import { RFValue } from 'react-native-responsive-fontsize'
 import useAuthStore from '../../store/useAuthStore'
-
-const pieData = [
-  {
-    value: 60,
-    color: theme.colors.tertiary,
-    gradientCenterColor: theme.colors.tertiary,
-    focused: true,
-  },
-  {
-    value: 40,
-    color: theme.colors.grayLight,
-    gradientCenterColor: theme.colors.grayLight,
-  },
-]
+import useContentStore from '../../store/useContentStore'
+import Loading from '../common/Loading'
+import { useIsFocused } from '@react-navigation/native'
 
 export default function DayComponent({ style }) {
-  const { setDailyGoal, profile } = useAuthStore()
+  const isFocused = useIsFocused()
+  const { setDailyGoal, profile, user } = useAuthStore()
+
   const [modalVisible, setModalVisible] = useState(false)
   const [goalValue, setGoalValue] = useState('')
+
+  const { percentageDifferences, progress, todayProgessData } =
+    useContentStore()
+
+  const [pieData, setPieData] = useState([
+    {
+      value: 100,
+      color: theme.colors.tertiary,
+      focused: true,
+    },
+    {
+      value: 120,
+      color: theme.colors.grayLight,
+      gradientCenterColor: theme.colors.grayLight,
+    },
+  ])
+
+  useEffect(() => {
+    if (progress) {
+      let completed = percentageDifferences.todayCompletedGoalPercentage
+      if (percentageDifferences.todayCompletedGoalPercentage > 100) {
+        completed = 100
+      }
+      setPieData([
+        {
+          value: completed,
+          color: theme.colors.tertiary,
+          focused: true,
+        },
+        {
+          value: 100 - completed,
+          color: theme.colors.grayLight,
+          gradientCenterColor: theme.colors.grayLight,
+        },
+      ])
+    }
+  }, [progress, isFocused, user.dailyGoal])
+
+  if (progress === null || percentageDifferences === null || profile === null) {
+    return <Loading />
+  }
 
   const handleEditPress = () => {
     setModalVisible(true)
@@ -50,7 +82,7 @@ export default function DayComponent({ style }) {
 
   const handleSubmit = async () => {
     try {
-      await setDailyGoal(goalValue)
+      await setDailyGoal(goalValue * 60)
     } catch (error) {
       Alert.alert('Error', 'Failed to set daily goal')
     }
@@ -73,7 +105,9 @@ export default function DayComponent({ style }) {
               <CText
                 style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}
               >
-                47%
+                {Math.round(
+                  percentageDifferences.todayCompletedGoalPercentage
+                ) + '%'}
               </CText>
               <CText style={{ fontSize: 14, color: 'white' }}>Completed</CText>
             </View>
@@ -89,31 +123,36 @@ export default function DayComponent({ style }) {
             <CText weight='semiBold' style={GlobalStyles.blockTitle}>
               Daily Sessions
             </CText>
-            <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
+            <CText style={GlobalStyles.blockSubTitle}>
+              {todayProgessData.length} sessions
+            </CText>
           </View>
           <ScrollView directionalLockEnabled={'false'} horizontal={true}>
             <View style={styles.sessionsSubContainer}>
-              <SessionCard
+              {todayProgessData.map((session, index) => (
+                <SessionCard
+                  key={index}
+                  imageUrl={session.sessionData.thumbnailUrl}
+                  level={session.sessionData.level}
+                  title={session.sessionData.title}
+                  type={session.sessionData.type}
+                  duration={session.sessionData.duration}
+                />
+              ))}
+              {/* <SessionCard
                 imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
                 level='Beginner'
                 title='On the Beach'
                 type='Guided'
                 duration='25 min'
-              />
-              <SessionCard
-                imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
-                level='Beginner'
-                title='On the Beach'
-                type='Guided'
-                duration='25 min'
-              />
+              /> */}
             </View>
           </ScrollView>
         </View>
         {/* Set daily goal use a modal for edit */}
         <TextCard
           title='My daily goal'
-          subTitle={profile.dailyGoal + ' Minutes'}
+          subTitle={profile.dailyGoal / 60 + ' Minutes'}
           buttonTitle='Edit'
           onButtonPress={handleEditPress}
         />

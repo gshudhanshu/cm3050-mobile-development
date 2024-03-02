@@ -12,6 +12,7 @@ import {
   collection,
   query,
   where,
+  orderBy,
   Timestamp,
 } from 'firebase/firestore'
 
@@ -35,6 +36,7 @@ const useContentStore = create((set) => ({
   categories: [],
   sessions: [],
   progress: [],
+  todayProgessData: [],
   percentageDifferences: {
     last7Days: 0,
     last30Days: 0,
@@ -81,12 +83,18 @@ const useContentStore = create((set) => ({
   },
   // Method to add a new finished session
   addFinishedSession: async (userId, sessionData) => {
-    const sessionCollectionRef = collection(db, `progress/${userId}/sessions`)
-    const newSessionData = { ...sessionData, date: Timestamp.now() } // Use Firestore Timestamp for the date
+    // Step 1: Add the session to the progress collection
+    console.log('sessionRef', sessionRef)
+    const sessionRef = doc(db, 'sessions', sessionData.sessionId)
+    const progressRef = collection(db, `progress/${userId}/sessions`)
+    const newSessionData = {
+      sessionRef: sessionRef,
+      ...sessionData,
+      date: Timestamp.now(),
+    }
+    await addDoc(progressRef, newSessionData)
 
-    // Add new session as a separate document
-    await addDoc(sessionCollectionRef, newSessionData)
-    // Step 2: Update the longest streak in the user's document
+    // Step 2: Update user document with streak, total sessions, and total duration
     const userRef = doc(db, 'users', userId)
     const userDoc = await getDoc(userRef)
 
@@ -96,11 +104,15 @@ const useContentStore = create((set) => ({
     }
 
     const userData = userDoc.data()
-    // Assuming the lastSessionDate is stored in the user document and sessions are daily
     const lastSessionDate = userData.lastSessionDate
       ? userData.lastSessionDate.toDate()
       : null
-    let { longestStreak = 0, currentStreak = 0 } = userData
+    let {
+      longestStreak = 0,
+      currentStreak = 0,
+      totalSessions = 0,
+      totalSessionDuration = 0,
+    } = userData
     const currentDate = new Date()
 
     if (lastSessionDate) {
@@ -108,102 +120,124 @@ const useContentStore = create((set) => ({
         dayjs(lastSessionDate),
         'day'
       )
-      if (differenceInDays === 1) {
-        // Continue the current streak
-        currentStreak += 1
-      } else if (differenceInDays > 1) {
-        // Reset the current streak
-        currentStreak = 1
-      }
+      currentStreak = differenceInDays === 1 ? currentStreak + 1 : 1 // Continue or reset the current streak
     } else {
-      // Starting the first streak
-      currentStreak = 1
+      currentStreak = 1 // Starting the first streak
     }
 
-    if (currentStreak > longestStreak) {
-      longestStreak = currentStreak
-      // Update the user document with the new longest streak
-      await setDoc(
-        userRef,
-        {
-          longestStreak,
-          currentStreak,
-          lastSessionDate: Timestamp.fromDate(currentDate),
-        },
-        { merge: true }
-      )
-    } else {
-      // Update the current streak and last session date even if it's not the longest
-      await setDoc(
-        userRef,
-        { currentStreak, lastSessionDate: Timestamp.fromDate(currentDate) },
-        { merge: true }
-      )
-    }
+    // Update longest streak if the current streak surpasses it
+    longestStreak =
+      currentStreak > longestStreak ? currentStreak : longestStreak
+
+    // Increment total sessions and total session duration
+    totalSessions += 1
+    totalSessionDuration += sessionData.duration // Assuming 'duration' is provided in sessionData in minutes
+
+    // Update the user document with the new data
+    await setDoc(
+      userRef,
+      {
+        currentStreak,
+        longestStreak,
+        lastSessionDate: Timestamp.fromDate(currentDate),
+        totalSessions,
+        totalSessionDuration,
+      },
+      { merge: true }
+    )
   },
 
   // Method to fetch progress of the last 30 days for a user
   fetchProgressLast65DaysAndCalculateAverages: async (userId, dailyGoal) => {
-    const today = dayjs().tz('Europe/London')
+    console.log('Fetching progress for the last 65 days...')
+    const today = dayjs()
     const sixtyFiveDaysAgo = today.subtract(65, 'days')
-    const sessionsRef = collection(db, `progress/${userId}/sessions`)
+    const progressCollectionRef = collection(db, `progress/${userId}/sessions`)
 
     // Query for sessions in the last 65 days
-    const sessionsQuery = query(
-      sessionsRef,
+    const progressQuery = query(
+      progressCollectionRef,
       where('date', '>=', Timestamp.fromDate(sixtyFiveDaysAgo.toDate())),
       orderBy('date', 'desc')
     )
 
-    const snapshot = await getDocs(sessionsQuery)
-    const sessions = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      date: doc.data().date.toDate(),
-    }))
+    const progressSnapshot = await getDocs(progressQuery)
+    let progressData = []
+    let todaySessionsData = []
 
-    // Filter sessions for calculating averages and differences
-    const filterSessionsForPeriod = (daysAgoStart, daysAgoEnd) => {
-      const endPeriod = today.subtract(daysAgoEnd, 'days')
-      const startPeriod = today.subtract(daysAgoStart, 'days')
-      return sessions.filter(
-        (session) =>
-          dayjs(session.date).isAfter(endPeriod) &&
-          dayjs(session.date).isBefore(startPeriod)
-      )
+    for (const doc of progressSnapshot.docs) {
+      let data = doc.data()
+      data.date = data.date.toDate() // Convert Timestamp to Date object
+
+      // For today's sessions, fetch the detailed session data
+      if (dayjs(data.date).isSame(today, 'day')) {
+        const sessionSnapshot = await getDoc(data.sessionRef)
+        if (sessionSnapshot.exists()) {
+          todaySessionsData.push({
+            ...data,
+            sessionData: { ...sessionSnapshot.data() }, // Merge session details
+          })
+        }
+      } else {
+        progressData.push(data)
+      }
     }
 
-    // Calculate averages for the specified periods
-    const last7DaysSessions = filterSessionsForPeriod(7, 0)
-    const previous7DaysSessions = filterSessionsForPeriod(14, 7)
-    const last30DaysSessions = filterSessionsForPeriod(30, 0)
-    const previous30DaysSessions = filterSessionsForPeriod(60, 30)
+    // Now, `progressData` contains sessions for the last 65 days excluding today,
+    // and `todaySessionsData` contains today's sessions with detailed data.
 
-    const avgLast7Days = calculateAverageDuration(last7DaysSessions)
-    const avgPrevious7Days = calculateAverageDuration(previous7DaysSessions)
-    const avgLast30Days = calculateAverageDuration(last30DaysSessions)
-    const avgPrevious30Days = calculateAverageDuration(previous30DaysSessions)
+    // Calculate averages and percentage differences here...
 
-    // Calculate percentage differences
-    const percentDifference7Days = avgPrevious7Days
-      ? ((avgLast7Days - avgPrevious7Days) / avgPrevious7Days) * 100
-      : 0
-    const percentDifference30Days = avgPrevious30Days
-      ? ((avgLast30Days - avgPrevious30Days) / avgPrevious30Days) * 100
-      : 0
+    const calculatePercentageDifference = (currentPeriod, previousPeriod) => {
+      if (previousPeriod.length === 0) return 0
+      const currentAverage =
+        currentPeriod.reduce((acc, cur) => acc + cur.duration, 0) /
+        currentPeriod.length
+      const previousAverage =
+        previousPeriod.reduce((acc, cur) => acc + cur.duration, 0) /
+        previousPeriod.length
+      return ((currentAverage - previousAverage) / previousAverage) * 100
+    }
 
-    // Calculate today's completed goal percentage
-    const todaySessions = filterSessionsForPeriod(1, 0)
-    const todayTotalDuration = calculateAverageDuration(todaySessions)
-    const todayCompletedGoalPercentage = dailyGoal
-      ? (todayTotalDuration / dailyGoal) * 100
-      : 0
+    // Example calculation (adapt as necessary)
+    const last7DaysSessions = progressData.filter((session) =>
+      dayjs(session.date).isAfter(today.subtract(7, 'days'))
+    )
+    const previous7DaysSessions = progressData.filter((session) =>
+      dayjs(session.date).isBetween(
+        today.subtract(14, 'days'),
+        today.subtract(7, 'days')
+      )
+    )
+    const last30DaysSessions = progressData.filter((session) =>
+      dayjs(session.date).isAfter(today.subtract(30, 'days'))
+    )
+    const previous30DaysSessions = progressData.filter((session) =>
+      dayjs(session.date).isBetween(
+        today.subtract(60, 'days'),
+        today.subtract(30, 'days')
+      )
+    )
 
-    // Update Zustand store
+    const todayCompletedGoalPercentage =
+      (todaySessionsData.reduce((acc, cur) => acc + cur.duration, 0) /
+        dailyGoal) *
+      100
+
+    console.log('todaySessionsData', todaySessionsData)
+
     set({
+      todayProgessData: todaySessionsData,
+      progress: [...todaySessionsData, ...progressData], // Combine today's detailed sessions with other progress data
       percentageDifferences: {
-        last7Days: percentDifference7Days,
-        last30Days: percentDifference30Days,
+        last7Days: calculatePercentageDifference(
+          last7DaysSessions,
+          previous7DaysSessions
+        ),
+        last30Days: calculatePercentageDifference(
+          last30DaysSessions,
+          previous30DaysSessions
+        ),
         todayCompletedGoalPercentage,
       },
     })
