@@ -7,6 +7,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  addDoc,
   getDocs,
   collection,
   query,
@@ -80,100 +81,126 @@ const useContentStore = create((set) => ({
   },
   // Method to add a new finished session
   addFinishedSession: async (userId, sessionData) => {
-    const userProgressRef = doc(db, 'progress', userId)
+    const sessionCollectionRef = collection(db, `progress/${userId}/sessions`)
     const newSessionData = { ...sessionData, date: Timestamp.now() } // Use Firestore Timestamp for the date
 
-    // Fetch the current progress document to check the size of the sessions array
-    const docSnap = await getDoc(userProgressRef)
-    console.log(docSnap.data())
-    if (docSnap.exists()) {
-      let sessions = docSnap.data().sessions || []
+    // Add new session as a separate document
+    await addDoc(sessionCollectionRef, newSessionData)
+    // Step 2: Update the longest streak in the user's document
+    const userRef = doc(db, 'users', userId)
+    const userDoc = await getDoc(userRef)
 
-      // Check if the sessions array size exceeds 100
-      if (sessions.length >= 200) {
-        // Sort sessions by date to ensure we're removing the oldest ones
-        sessions.sort((a, b) => a.date.toMillis() - b.date.toMillis())
-
-        // Remove the oldest 135 entries to keep the last 65
-        sessions = sessions.slice(135)
-
-        // Update the sessions array in Firestore, including the new session
-        await setDoc(userProgressRef, {
-          sessions: [...sessions, newSessionData],
-        })
-      } else {
-        // If the array size does not exceed 100, simply append the new session
-        console.log('Adding new session')
-        await updateDoc(userProgressRef, {
-          sessions: arrayUnion(newSessionData),
-        })
-      }
-    } else {
-      // If the document does not exist, create it with the new session as the first entry
-      await setDoc(userProgressRef, { sessions: [newSessionData] })
-    }
-  },
-  // Method to fetch progress of the last 30 days for a user
-  fetchProgressLast65DaysAndCalculateAverages: async (userId, dailyGoal) => {
-    const userProgressRef = doc(db, 'progress', userId)
-
-    // Fetch the user's progress document
-    const docSnap = await getDoc(userProgressRef)
-    if (!docSnap.exists()) {
-      console.log('No such document!')
+    if (!userDoc.exists()) {
+      console.log('User document does not exist!')
       return
     }
 
-    // Filter sessions from the last 65 days
-    const cutoffDate = dayjs().tz('Europe/London').subtract(65, 'days')
-    let sessions = docSnap.data().sessions || []
-    sessions = sessions.filter((session) =>
-      dayjs(session.date.toDate()).isAfter(cutoffDate)
+    const userData = userDoc.data()
+    // Assuming the lastSessionDate is stored in the user document and sessions are daily
+    const lastSessionDate = userData.lastSessionDate
+      ? userData.lastSessionDate.toDate()
+      : null
+    let { longestStreak = 0, currentStreak = 0 } = userData
+    const currentDate = new Date()
+
+    if (lastSessionDate) {
+      const differenceInDays = dayjs(currentDate).diff(
+        dayjs(lastSessionDate),
+        'day'
+      )
+      if (differenceInDays === 1) {
+        // Continue the current streak
+        currentStreak += 1
+      } else if (differenceInDays > 1) {
+        // Reset the current streak
+        currentStreak = 1
+      }
+    } else {
+      // Starting the first streak
+      currentStreak = 1
+    }
+
+    if (currentStreak > longestStreak) {
+      longestStreak = currentStreak
+      // Update the user document with the new longest streak
+      await setDoc(
+        userRef,
+        {
+          longestStreak,
+          currentStreak,
+          lastSessionDate: Timestamp.fromDate(currentDate),
+        },
+        { merge: true }
+      )
+    } else {
+      // Update the current streak and last session date even if it's not the longest
+      await setDoc(
+        userRef,
+        { currentStreak, lastSessionDate: Timestamp.fromDate(currentDate) },
+        { merge: true }
+      )
+    }
+  },
+
+  // Method to fetch progress of the last 30 days for a user
+  fetchProgressLast65DaysAndCalculateAverages: async (userId, dailyGoal) => {
+    const today = dayjs().tz('Europe/London')
+    const sixtyFiveDaysAgo = today.subtract(65, 'days')
+    const sessionsRef = collection(db, `progress/${userId}/sessions`)
+
+    // Query for sessions in the last 65 days
+    const sessionsQuery = query(
+      sessionsRef,
+      where('date', '>=', Timestamp.fromDate(sixtyFiveDaysAgo.toDate())),
+      orderBy('date', 'desc')
     )
 
-    // Helper function for filtering sessions within a specific period
-    const filterSessionsForPeriod = (startDaysAgo, endDaysAgo) => {
-      const endDate = dayjs().tz('Europe/London').subtract(endDaysAgo, 'days')
-      const startDate = dayjs()
-        .tz('Europe/London')
-        .subtract(startDaysAgo, 'days')
-      return sessions.filter(({ date }) =>
-        dayjs(date.toDate()).isBetween(startDate, endDate, null, '[]')
+    const snapshot = await getDocs(sessionsQuery)
+    const sessions = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date.toDate(),
+    }))
+
+    // Filter sessions for calculating averages and differences
+    const filterSessionsForPeriod = (daysAgoStart, daysAgoEnd) => {
+      const endPeriod = today.subtract(daysAgoEnd, 'days')
+      const startPeriod = today.subtract(daysAgoStart, 'days')
+      return sessions.filter(
+        (session) =>
+          dayjs(session.date).isAfter(endPeriod) &&
+          dayjs(session.date).isBefore(startPeriod)
       )
     }
 
-    // Calculate average durations
-    const last7Days = filterSessionsForPeriod(0, 7)
-    const previous7Days = filterSessionsForPeriod(7, 14)
-    const last30Days = filterSessionsForPeriod(0, 30)
-    const previous30Days = filterSessionsForPeriod(30, 60)
+    // Calculate averages for the specified periods
+    const last7DaysSessions = filterSessionsForPeriod(7, 0)
+    const previous7DaysSessions = filterSessionsForPeriod(14, 7)
+    const last30DaysSessions = filterSessionsForPeriod(30, 0)
+    const previous30DaysSessions = filterSessionsForPeriod(60, 30)
 
-    // Calculate average session durations
-    const avgLast7Days = calculateAverageDuration(last7Days)
-    const avgPrevious7Days = calculateAverageDuration(previous7Days)
-    const avgLast30Days = calculateAverageDuration(last30Days)
-    const avgPrevious30Days = calculateAverageDuration(previous30Days)
+    const avgLast7Days = calculateAverageDuration(last7DaysSessions)
+    const avgPrevious7Days = calculateAverageDuration(previous7DaysSessions)
+    const avgLast30Days = calculateAverageDuration(last30DaysSessions)
+    const avgPrevious30Days = calculateAverageDuration(previous30DaysSessions)
 
     // Calculate percentage differences
-    const percentDifference7Days =
-      avgPrevious7Days > 0
-        ? ((avgLast7Days - avgPrevious7Days) / avgPrevious7Days) * 100
-        : 0
-    const percentDifference30Days =
-      avgPrevious30Days > 0
-        ? ((avgLast30Days - avgPrevious30Days) / avgPrevious30Days) * 100
-        : 0
+    const percentDifference7Days = avgPrevious7Days
+      ? ((avgLast7Days - avgPrevious7Days) / avgPrevious7Days) * 100
+      : 0
+    const percentDifference30Days = avgPrevious30Days
+      ? ((avgLast30Days - avgPrevious30Days) / avgPrevious30Days) * 100
+      : 0
 
-    // Today's completed goal percentage (assuming `dailyGoal` is defined elsewhere)
-    const todaySessions = filterSessionsForPeriod(0, 1)
+    // Calculate today's completed goal percentage
+    const todaySessions = filterSessionsForPeriod(1, 0)
     const todayTotalDuration = calculateAverageDuration(todaySessions)
     const todayCompletedGoalPercentage = dailyGoal
       ? (todayTotalDuration / dailyGoal) * 100
       : 0
 
-    // Update the store with calculated data
+    // Update Zustand store
     set({
-      progress: sessions,
       percentageDifferences: {
         last7Days: percentDifference7Days,
         last30Days: percentDifference30Days,

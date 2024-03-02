@@ -89,7 +89,7 @@ export default function ProgressScreen() {
               <View style={styles.statsContainer}>
                 <View style={styles.statsColumn}>
                   <CText weight='regular' style={styles.statsValue}>
-                    3
+                    {user.longestStreak}
                   </CText>
                   <CText weight='semiBold' style={styles.statsTitle}>
                     Streak
@@ -97,7 +97,7 @@ export default function ProgressScreen() {
                 </View>
                 <View style={[styles.statsColumn, styles.sessionStatColumn]}>
                   <CText weight='regular' style={styles.statsValue}>
-                    3
+                    {user.totalSessions}
                   </CText>
                   <CText weight='semiBold' style={styles.statsTitle}>
                     Sessions
@@ -105,7 +105,7 @@ export default function ProgressScreen() {
                 </View>
                 <View style={styles.statsColumn}>
                   <CText weight='regular' style={styles.statsValue}>
-                    3
+                    {user.totalMinutes}
                   </CText>
                   <CText weight='semiBold' style={styles.statsTitle}>
                     Min
