@@ -62,7 +62,7 @@ const AuthStack = createStackNavigator()
 const MainTab = createBottomTabNavigator()
 const RootStack = createStackNavigator()
 const SearchStack = createStackNavigator()
-const JournalStack = createStackNavigator()
+// const JournalStack = createStackNavigator()
 
 const AuthFlow = () => (
   <AuthStack.Navigator>
@@ -88,16 +88,16 @@ const SearchStackScreen = () => (
   </SearchStack.Navigator>
 )
 
-const JournalStackScreen = () => (
-  <JournalStack.Navigator
-    initialRouteName='Journal'
-    screenOptions={{ headerShown: false }}
-  >
-    <JournalStack.Screen name='Journal' component={JournalScreen} />
-    {/* <JournalStack.Screen name='JournalEntry' component={JournalEntryScreen} /> */}
-    <JournalStack.Screen name='JournalDetail' component={JournalDetailScreen} />
-  </JournalStack.Navigator>
-)
+// const JournalStackScreen = () => (
+//   <JournalStack.Navigator
+//     initialRouteName='Journal'
+//     screenOptions={{ headerShown: false }}
+//   >
+//     <JournalStack.Screen name='Journal' component={JournalScreen} />
+//     {/* <JournalStack.Screen name='JournalEntry' component={JournalEntryScreen} /> */}
+//     {/* <JournalStack.Screen name='JournalDetail' component={JournalDetailScreen} /> */}
+//   </JournalStack.Navigator>
+// )
 
 const MainAppFlow = () => (
   <MainTab.Navigator
@@ -147,8 +147,8 @@ const MainAppFlow = () => (
       }}
     />
     <MainTab.Screen
-      name='JournalTab'
-      component={JournalStackScreen}
+      name='Journal'
+      component={JournalScreen}
       options={{
         headerShown: false,
         tabBarLabel: 'Journal',
@@ -211,6 +211,10 @@ export default function App() {
             <RootStack.Screen
               name='JournalEntry'
               component={JournalEntryScreen}
+            />
+            <RootStack.Screen
+              name='JournalDetail'
+              component={JournalDetailScreen}
             />
           </>
         ) : (

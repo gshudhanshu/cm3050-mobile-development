@@ -11,7 +11,7 @@ import {
   TextInput,
   FlatList,
 } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIsFocused } from '@react-navigation/native'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
@@ -66,11 +66,17 @@ export default function SearchScreen() {
   const { fetchCategories, categories } = useContentStore()
   const isFocused = useIsFocused()
   const navigation = useNavigation()
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     console.log('SearchScreen mounted')
     fetchCategories()
   }, [isFocused])
+
+  const filteredCategories = categories.filter((category) =>
+    category.category.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   const renderCategoryCard = (item, index) => (
     <View
       key={item.id}
@@ -101,7 +107,12 @@ export default function SearchScreen() {
           <Header showBack={false} useLogo={false} title={'Search'} />
           {/* Search input */}
           <View style={styles.searchInputContainer}>
-            <TextInput placeholder='Search...' style={[GlobalStyles.input]} />
+            <TextInput
+              placeholder='Search...'
+              style={[GlobalStyles.input]}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
           </View>
           {/* Categories cards */}
           <View style={styles.categoriesContainer}>
@@ -111,7 +122,7 @@ export default function SearchScreen() {
               </CText>
             </View>
             <View style={styles.categoriesGrid}>
-              {categories.map(renderCategoryCard)}
+              {filteredCategories.map(renderCategoryCard)}
             </View>
           </View>
         </ScrollView>

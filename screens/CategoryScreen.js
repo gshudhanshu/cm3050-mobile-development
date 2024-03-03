@@ -11,7 +11,7 @@ import {
   TextInput,
   FlatList,
 } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
 import { RFValue } from 'react-native-responsive-fontsize'
@@ -71,6 +71,7 @@ const sessionsData = [
 ]
 
 export default function CategoryScreen({ route }) {
+  const [searchQuery, setSearchQuery] = useState('')
   const { category } = route.params
   const { fetchSessions, sessions } = useContentStore()
   const isFocused = useIsFocused()
@@ -79,6 +80,10 @@ export default function CategoryScreen({ route }) {
   useEffect(() => {
     fetchSessions(category)
   }, [isFocused, category])
+
+  const filteredSessions = sessions.filter((session) =>
+    session.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const renderCategoryCard = (item, index) => (
     <View
@@ -111,7 +116,12 @@ export default function CategoryScreen({ route }) {
           <Header showBack={true} useLogo={false} title={'Search'} />
           {/* Search input */}
           <View style={styles.searchInputContainer}>
-            <TextInput placeholder='Search...' style={[GlobalStyles.input]} />
+            <TextInput
+              placeholder='Search...'
+              style={[GlobalStyles.input]}
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
+            />
           </View>
           {/* Categories cards */}
           <View style={styles.categoriesContainer}>
@@ -121,7 +131,7 @@ export default function CategoryScreen({ route }) {
               </CText>
             </View>
             <View style={styles.categoriesGrid}>
-              {sessions.map(renderCategoryCard)}
+              {filteredSessions.map(renderCategoryCard)}
             </View>
           </View>
         </ScrollView>

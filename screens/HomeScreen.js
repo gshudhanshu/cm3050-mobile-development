@@ -85,7 +85,7 @@ export default function HomeScreen() {
           <View style={styles.container}>
             <View style={GlobalStyles.blockContainer}>
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
-                Trending
+                Popular Sessions
               </CText>
               <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
             </View>
@@ -114,7 +114,7 @@ export default function HomeScreen() {
           <View style={styles.container}>
             <View style={GlobalStyles.blockContainer}>
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
-                Recommended
+                Curated Selections
               </CText>
               <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
             </View>

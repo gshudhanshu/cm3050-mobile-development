@@ -9,7 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
@@ -32,6 +32,7 @@ export default function JournalScreen() {
   const { journals, fetchJournals } = useJournalStore()
   const { user } = useAuthStore()
   const navigation = useNavigation()
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     if (user?.uid) {
@@ -42,6 +43,13 @@ export default function JournalScreen() {
   const addNewJournal = () => {
     navigation.navigate('JournalEntry')
   }
+
+  // Filter journals based on the search query
+  const filteredJournals = journals.filter(
+    (journal) =>
+      journal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      journal.description.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <SafeAreaView style={GlobalStyles.safeAreaContainer}>
@@ -54,7 +62,12 @@ export default function JournalScreen() {
           <Header showBack={false} useLogo={false} title={'Journal'} />
           {/* Search input */}
           <View style={styles.searchInputContainer}>
-            <TextInput placeholder='Search...' style={[GlobalStyles.input]} />
+            <TextInput
+              placeholder='Search...'
+              style={[GlobalStyles.input]}
+              onChangeText={setSearchQuery}
+              value={searchQuery}
+            />
           </View>
           {/* Journal cards */}
           <View style={styles.journalContainer}>
@@ -70,7 +83,7 @@ export default function JournalScreen() {
               </TouchableOpacity>
             </View>
             <View style={styles.journalsContainer}>
-              {journals.map((journal) => (
+              {filteredJournals.map((journal) => (
                 <JournalCard
                   key={journal.id}
                   imageUri={journal.imageUrl || 'https://placehold.it/300x300'}
