@@ -147,7 +147,7 @@ const MainAppFlow = () => (
       }}
     />
     <MainTab.Screen
-      name='Journal'
+      name='JournalTab'
       component={JournalStackScreen}
       options={{
         headerShown: false,

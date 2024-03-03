@@ -14,7 +14,7 @@ const JournalCard = ({ imageUri, date, title, description, onButtonPress }) => {
         <CText weight='semiBold' style={styles.date}>
           {date}
         </CText>
-        <CText weight='semiBold' style={styles.title}>
+        <CText weight='semiBold' style={styles.title} numberOfLines={1}>
           {title}
         </CText>
         <CText style={styles.description} numberOfLines={3}>

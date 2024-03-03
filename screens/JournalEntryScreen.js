@@ -11,6 +11,7 @@ import {
   TextInput,
   Button,
   Platform,
+  Alert,
 } from 'react-native'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
@@ -22,42 +23,65 @@ import { RFValue } from 'react-native-responsive-fontsize'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
 import Header from '../components/Header'
+import useJournalStore from '../store/useJournalStore'
+import useAuthStore from '../store/useAuthStore'
+import { useNavigation } from '@react-navigation/native'
 
 // Validation Schema using Yup
 const JournalEntrySchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
   description: Yup.string().required('Description is required'),
   date: Yup.date().required('Date is required'),
-  imageUri: Yup.string().notRequired(),
+  imageUrl: Yup.string().notRequired(),
 })
 
-const JournalEntryScreen = () => {
+const JournalEntryScreen = ({ route }) => {
+  const navigation = useNavigation()
   const [showDatePicker, setShowDatePicker] = useState(false)
+  const { addJournal, editJournal, deleteJournal } = useJournalStore()
+  const { user } = useAuthStore()
+  const { imageUrl, date, title, description, id } = route.params || {}
 
-  const initialValues = {
-    title: '',
-    description: '',
-    date: new Date(),
-    imageUri: '',
-  }
+  const initialValues = id
+    ? {
+        title: title,
+        description: description,
+        date: date.toDate(),
+        imageUri: '',
+      }
+    : {
+        title: '',
+        description: '',
+        date: new Date(),
+        imageUri: '',
+      }
+
+  console.log('initialValues', initialValues)
 
   const pickImage = async (setFieldValue) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [3, 3],
       quality: 1,
     })
 
     if (!result.cancelled) {
-      setFieldValue('imageUri', result.uri)
+      setFieldValue('imageUri', result.assets[0].uri)
     }
   }
 
   const submitForm = async (values, actions) => {
-    // Here, you would handle the submission of the journal entry
-    console.log(values)
-    // After submission, you might want to clear the form
+    if (id) {
+      // Editing an existing journal
+      await editJournal(user.uid, id, values)
+      Alert.alert('Success', 'Journal entry updated successfully.')
+    } else {
+      // Adding a new journal
+      const newJournal = await addJournal(user.uid, values)
+      Alert.alert('Success', 'Journal entry added successfully.')
+    }
+    navigation.navigate('Journal')
     actions.resetForm()
   }
 
@@ -69,7 +93,11 @@ const JournalEntryScreen = () => {
           backgroundColor={theme.colors.primary}
         />
         <View style={[GlobalStyles.container, styles.container]}>
-          <Header showBack={true} useLogo={false} title='Journal Entry' />
+          <Header
+            showBack={true}
+            useLogo={false}
+            title={id ? 'Edit Journal' : 'Journal Entry'}
+          />
           <Formik
             initialValues={initialValues}
             validationSchema={JournalEntrySchema}
@@ -91,7 +119,10 @@ const JournalEntryScreen = () => {
                 >
                   <Image
                     source={{
-                      uri: values.imageUri || 'https://placehold.it/100x100',
+                      uri:
+                        values.imageUri ||
+                        imageUrl ||
+                        'https://placehold.it/300x300',
                     }}
                     style={styles.image}
                   />

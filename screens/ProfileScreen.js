@@ -31,7 +31,7 @@ import {
   uploadProfilePicture,
   saveUserProfile,
   getUserProfile,
-} from '../utils/userProfileUtils'
+} from '../utils/utils'
 import useAuthStore from '../store/useAuthStore'
 
 import { auth } from '../firebase/firebase' // Adjust import paths as necessary

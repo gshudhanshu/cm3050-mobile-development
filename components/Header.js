@@ -9,7 +9,7 @@ import theme from '../utils/theme'
 import CText from './common/CText'
 
 import useAuthStore from '../store/useAuthStore'
-import { getUserProfile } from '../utils/userProfileUtils'
+import { getUserProfile } from '../utils/utils'
 
 const Header = ({ showBack, title, useLogo }) => {
   const navigation = useNavigation()

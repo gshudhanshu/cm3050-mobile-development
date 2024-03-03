@@ -3,7 +3,8 @@ import { db, storage } from '../firebase/firebase.js'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 
-const uriToBlob = async (uri) => {
+// Utility function to convert a file URI to a Blob
+export const uriToBlob = async (uri) => {
   const response = await fetch(uri)
   const blob = await response.blob()
   return blob
