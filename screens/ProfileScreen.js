@@ -144,13 +144,11 @@ const ProfileScreen = () => {
                 touched,
               }) => (
                 <View style={GlobalStyles.safeAreaContainer}>
-                  <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                      <BackIcon style={styles.backIcon} />
-                    </TouchableOpacity>
-                  </View>
                   <View style={styles.formContainer}>
-                    <TouchableOpacity onPress={() => pickImage(setFieldValue)}>
+                    <TouchableOpacity
+                      onPress={() => pickImage(setFieldValue)}
+                      style={{ alignItems: 'center' }}
+                    >
                       <Image
                         source={{
                           uri:
@@ -231,49 +229,6 @@ const ProfileScreen = () => {
       </ScrollView>
     </SafeAreaView>
   )
-
-  return (
-    <View style={styles.container}>
-      <Button title='Pick an image from camera roll' onPress={pickImage} />
-      {profileData.profilePicture ? (
-        <Image
-          source={{ uri: profileData.profilePicture }}
-          style={styles.image}
-        />
-      ) : null}
-      <TextInput
-        style={styles.input}
-        placeholder='First Name'
-        value={profileData.firstName}
-        onChangeText={(text) =>
-          setProfileData({ ...profileData, firstName: text })
-        }
-      />
-      <TextInput
-        style={styles.input}
-        placeholder='Last Name'
-        value={profileData.lastName}
-        onChangeText={(text) =>
-          setProfileData({ ...profileData, lastName: text })
-        }
-      />
-      <TextInput
-        style={styles.input}
-        placeholder='Date of Birth'
-        value={profileData.dob}
-        onChangeText={(text) => setProfileData({ ...profileData, dob: text })}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder='Gender'
-        value={profileData.gender}
-        onChangeText={(text) =>
-          setProfileData({ ...profileData, gender: text })
-        }
-      />
-      <Button title='Save Profile' onPress={handleSaveProfile} />
-    </View>
-  )
 }
 
 const styles = StyleSheet.create({
@@ -292,6 +247,7 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     gap: RFValue(20),
+    marginVertical: RFValue(20),
   },
   profileContainer: {
     width: '100%',

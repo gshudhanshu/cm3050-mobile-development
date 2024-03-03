@@ -21,13 +21,16 @@ import LoginScreen from './screens/LoginScreen'
 import SignupScreen from './screens/SignupScreen'
 import ForgetPasswordScreen from './screens/ForgetPasswordScreen'
 import HomeScreen from './screens/HomeScreen'
-import JournalScreen from './screens/JournalScreen'
 import ProgressScreen from './screens/ProgressScreen'
 import ProfileScreen from './screens/ProfileScreen'
 
 import SearchScreen from './screens/SearchScreen'
 import CategoryScreen from './screens/CategoryScreen'
 import PlayerScreen from './screens/PlayerScreen'
+
+import JournalScreen from './screens/JournalScreen'
+import JournalEntryScreen from './screens/JournalEntryScreen'
+import JournalDetailScreen from './screens/JournalDetailScreen'
 
 import HomeIcon from './assets/home-icon'
 import SearchIcon from './assets/search-icon'
@@ -59,6 +62,7 @@ const AuthStack = createStackNavigator()
 const MainTab = createBottomTabNavigator()
 const RootStack = createStackNavigator()
 const SearchStack = createStackNavigator()
+const JournalStack = createStackNavigator()
 
 const AuthFlow = () => (
   <AuthStack.Navigator>
@@ -82,6 +86,17 @@ const SearchStackScreen = () => (
     <SearchStack.Screen name='Category' component={CategoryScreen} />
     <SearchStack.Screen name='Player' component={PlayerScreen} />
   </SearchStack.Navigator>
+)
+
+const JournalStackScreen = () => (
+  <JournalStack.Navigator
+    initialRouteName='Journal'
+    screenOptions={{ headerShown: false }}
+  >
+    <JournalStack.Screen name='Journal' component={JournalScreen} />
+    {/* <JournalStack.Screen name='JournalEntry' component={JournalEntryScreen} /> */}
+    <JournalStack.Screen name='JournalDetail' component={JournalDetailScreen} />
+  </JournalStack.Navigator>
 )
 
 const MainAppFlow = () => (
@@ -133,7 +148,7 @@ const MainAppFlow = () => (
     />
     <MainTab.Screen
       name='Journal'
-      component={JournalScreen}
+      component={JournalStackScreen}
       options={{
         headerShown: false,
         tabBarLabel: 'Journal',
@@ -193,6 +208,10 @@ export default function App() {
           <>
             <RootStack.Screen name='MainApp' component={MainAppFlow} />
             <RootStack.Screen name='Profile' component={ProfileScreen} />
+            <RootStack.Screen
+              name='JournalEntry'
+              component={JournalEntryScreen}
+            />
           </>
         ) : (
           <RootStack.Screen name='Auth' component={AuthFlow} />
