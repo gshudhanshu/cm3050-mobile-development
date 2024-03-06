@@ -7,6 +7,8 @@ import {
   Pressable,
   ScrollView,
   TouchableOpacity,
+  Modal,
+  TextInput,
 } from 'react-native'
 
 import React, { useEffect, useState } from 'react'
@@ -40,7 +42,7 @@ const FeelingEmojis = [
 
 export default function HomeScreen() {
   const navigation = useNavigation()
-  const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
   // const [selectedMood, setSelectedMood] = useState(null)
 
   const { dailyQuote, fetchQuote, setUserMood, fetchUserMood, userMood } =
@@ -101,7 +103,6 @@ export default function HomeScreen() {
                   <EmojiComponent
                     width={RFValue(40)}
                     gray={userMood !== index + 1}
-                    style={{}}
                   />
                 </TouchableOpacity>
               ))}
@@ -117,10 +118,48 @@ export default function HomeScreen() {
                 {dailyQuote.quote}
               </CText>
             </View>
-            <TouchableOpacity style={[GlobalStyles.button, styles.viewButton]}>
+            <TouchableOpacity
+              style={[GlobalStyles.button, styles.viewButton]}
+              onPress={() => setModalVisible(true)}
+            >
               <CText style={[GlobalStyles.buttonText]}>View</CText>
             </TouchableOpacity>
           </View>
+          <Modal
+            animationType='slide'
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible)
+            }}
+          >
+            <View style={modalStyles.centeredView}>
+              <View style={modalStyles.modalView}>
+                <CText weight='semiBold' style={modalStyles.modalTitle}>
+                  Today's Quote
+                </CText>
+                <CText weight='medium' style={modalStyles.title}>
+                  {dailyQuote.quote}
+                </CText>
+                <CText weight='semiBold' style={modalStyles.author}>
+                  - {dailyQuote.author}
+                </CText>
+
+                <View style={modalStyles.buttonContainer}>
+                  <TouchableOpacity
+                    style={[GlobalStyles.button, modalStyles.cancelButton]}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <CText
+                      style={[GlobalStyles.buttonText, modalStyles.buttonText]}
+                    >
+                      Cancel
+                    </CText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
           {/* Popular sessions */}
           <View style={styles.container}>
             <View style={GlobalStyles.blockContainer}>
@@ -256,5 +295,50 @@ const styles = StyleSheet.create({
     gap: RFValue(15),
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+  },
+})
+
+const modalStyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: RFValue(20),
+    padding: RFValue(20),
+    alignItems: 'center',
+    shadowColor: theme.colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: theme.fonts.sizes.h4,
+    textTransform: 'uppercase',
+  },
+  title: {
+    fontSize: RFValue(22),
+    lineHeight: RFValue(35),
+    textAlign: 'center',
+    marginVertical: RFValue(20),
+    color: theme.colors.tertiary,
+  },
+  author: {
+    fontSize: theme.fonts.sizes.h6,
+    marginBottom: RFValue(20),
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+  },
+  cancelButton: {
+    backgroundColor: theme.colors.tertiary,
   },
 })
