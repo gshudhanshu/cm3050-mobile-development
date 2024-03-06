@@ -19,7 +19,7 @@ import Header from '../components/Header'
 import CText from '../components/common/CText'
 import SessionCard from '../components/SessionCard'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
-import useContentStore from '../store/useContentStore'
+import useSessionStore from '../store/useSessionStore'
 
 const sessionsData = [
   // imageUrl, level, title, type, duration, onPress
@@ -73,7 +73,7 @@ const sessionsData = [
 export default function CategoryScreen({ route }) {
   const [searchQuery, setSearchQuery] = useState('')
   const { category } = route.params
-  const { fetchSessions, sessions } = useContentStore()
+  const { fetchSessions, sessions } = useSessionStore()
   const isFocused = useIsFocused()
   const navigation = useNavigation()
 

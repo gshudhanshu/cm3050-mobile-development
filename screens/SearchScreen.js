@@ -21,7 +21,7 @@ import CText from '../components/common/CText'
 import CategoryCard from '../components/CategoryCard'
 import { useNavigation } from '@react-navigation/native'
 
-import useContentStore from '../store/useContentStore'
+import useSessionStore from '../store/useSessionStore'
 
 const categoriesData = [
   {
@@ -63,7 +63,7 @@ const categoriesData = [
 ]
 
 export default function SearchScreen() {
-  const { fetchCategories, categories } = useContentStore()
+  const { fetchCategories, categories } = useSessionStore()
   const isFocused = useIsFocused()
   const navigation = useNavigation()
   const [searchQuery, setSearchQuery] = useState('')

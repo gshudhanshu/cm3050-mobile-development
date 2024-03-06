@@ -17,7 +17,7 @@ import TextCard from '../TextCard'
 import GlobalStyles from '../../utils/GlobalStyles'
 import { RFValue } from 'react-native-responsive-fontsize'
 import useAuthStore from '../../store/useAuthStore'
-import useContentStore from '../../store/useContentStore'
+import useSessionStore from '../../store/useSessionStore'
 import Loading from '../common/Loading'
 import { useIsFocused } from '@react-navigation/native'
 
@@ -29,7 +29,7 @@ export default function DayComponent() {
   const [goalValue, setGoalValue] = useState('')
 
   const { percentageDifferences, progress, todayProgressData } =
-    useContentStore()
+    useSessionStore()
 
   const [pieData, setPieData] = useState([
     {

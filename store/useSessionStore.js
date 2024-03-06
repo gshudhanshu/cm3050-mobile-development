@@ -14,6 +14,7 @@ import {
   where,
   orderBy,
   Timestamp,
+  limit,
 } from 'firebase/firestore'
 
 import dayjs from 'dayjs'
@@ -23,7 +24,10 @@ dayjs.extend(customParseFormat)
 dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 
-const useContentStore = create((set) => ({
+const useSessionStore = create((set) => ({
+  popularSessions: [],
+  curatedSessions: [],
+
   categories: [],
   sessions: [],
   progress: [],
@@ -72,6 +76,37 @@ const useContentStore = create((set) => ({
     const sessionDoc = await getDoc(sessionRef)
     return sessionDoc.data()
   },
+
+  // Fetch popular sessions function
+  fetchPopularSessions: async () => {
+    const sessionsQuery = query(
+      collection(db, 'sessions'),
+      orderBy('numberOfPlays', 'desc'),
+      limit(10)
+    )
+    const querySnapshot = await getDocs(sessionsQuery)
+    const popularSessions = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    set({ popularSessions })
+  },
+
+  // Fetch curated sessions function
+  fetchCuratedSessions: async () => {
+    const sessionsQuery = query(
+      collection(db, 'sessions'),
+      where('curated', '==', true),
+      limit(10)
+    )
+    const querySnapshot = await getDocs(sessionsQuery)
+    const curatedSessions = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    set({ curatedSessions })
+  },
+
   // Method to add a new finished session
   addFinishedSession: async (userId, sessionData) => {
     // Step 1: Add the session to the progress collection
@@ -84,6 +119,18 @@ const useContentStore = create((set) => ({
       date: Timestamp.now(),
     }
     await addDoc(progressRef, newSessionData)
+
+    // Fetch the current session to update its play count
+    const currentSessionDoc = await getDoc(sessionRef)
+    if (currentSessionDoc.exists()) {
+      const currentSessionData = currentSessionDoc.data()
+      const updatedPlays = (currentSessionData.numberOfPlays || 0) + 1
+
+      // Update the session document with the new number of plays
+      await updateDoc(sessionRef, { numberOfPlays: updatedPlays })
+    } else {
+      console.log('Session document does not exist!')
+    }
 
     // Step 2: Update user document with streak, total sessions, and total duration
     const userRef = doc(db, 'users', userId)
@@ -242,4 +289,4 @@ const useContentStore = create((set) => ({
   },
 }))
 
-export default useContentStore
+export default useSessionStore

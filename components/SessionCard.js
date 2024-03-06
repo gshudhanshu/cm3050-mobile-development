@@ -20,9 +20,13 @@ const SessionCard = ({
   type,
   duration = 0,
   onPress,
+  minCardWidth,
 }) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.cardContainer, { minWidth: minCardWidth }]}
+      onPress={onPress}
+    >
       <ImageBackground
         source={{
           uri: imageUrl,

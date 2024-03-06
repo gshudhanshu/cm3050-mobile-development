@@ -23,12 +23,12 @@ import DayComponent from '../components/progress-tabs/DayComponent'
 import MonthComponent from '../components/progress-tabs/MonthComponent'
 import WeekComponent from '../components/progress-tabs/WeekComponent'
 import useAuthStore from '../store/useAuthStore'
-import useContentStore from '../store/useContentStore'
+import useSessionStore from '../store/useSessionStore'
 
 export default function ProgressScreen() {
   const navigation = useNavigation()
   const { user, profile } = useAuthStore()
-  const { fetchProgressLast65DaysAndCalculateAverages } = useContentStore()
+  const { fetchProgressLast65DaysAndCalculateAverages } = useSessionStore()
   const isFocused = useIsFocused()
 
   const layout = useWindowDimensions()

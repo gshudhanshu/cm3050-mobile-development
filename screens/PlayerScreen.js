@@ -23,7 +23,7 @@ import CText from '../components/common/CText'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import GlobalStyles from '../utils/GlobalStyles'
 import Header from '../components/Header'
-import useContentStore from '../store/useContentStore'
+import useSessionStore from '../store/useSessionStore'
 import useAuthStore from '../store/useAuthStore'
 
 import PlayIcon from '../assets/play-icon'
@@ -36,21 +36,22 @@ import SpeakerIcon from '../assets/speaker-icon'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import timezone from 'dayjs/plugin/timezone'
+import Loading from '../components/common/Loading'
 dayjs.extend(customParseFormat)
 dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 
 export default function PlayerScreen({ route }) {
-  const { addFinishedSession } = useContentStore()
+  const { addFinishedSession } = useSessionStore()
   const { user } = useAuthStore()
   const { session } = route.params
   const [sound, setSound] = useState(null)
   const [playbackStatus, setPlaybackStatus] = useState({})
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const instructionTimeouts = useRef([])
   const [currentInstruction, setCurrentInstruction] =
     useState('No Instructions')
+  const [isLoading, setIsLoading] = useState(true)
 
   const spokenInstructionsRef = useRef(new Set())
   const isFocused = useIsFocused()
@@ -78,12 +79,14 @@ export default function PlayerScreen({ route }) {
       handleAudioPlaybackStatusUpdate
     )
     setSound(newSound)
+    setIsLoading(false)
   }
 
   const unloadAudio = async () => {
     if (sound) {
       await sound.unloadAsync()
       setSound(null)
+      setIsLoading(true)
     }
   }
 
@@ -160,6 +163,10 @@ export default function PlayerScreen({ route }) {
         }
       }
     })
+  }
+
+  if (isLoading) {
+    return <Loading />
   }
 
   return (

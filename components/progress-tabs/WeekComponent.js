@@ -6,7 +6,7 @@ import GlobalStyles from '../../utils/GlobalStyles'
 import theme from '../../utils/theme'
 import TextCard from '../TextCard'
 import CText from '../common/CText'
-import useContentStore from '../../store/useContentStore'
+import useSessionStore from '../../store/useSessionStore'
 
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -16,7 +16,7 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 
 export default function WeekComponent() {
-  const { progress, percentageDifferences } = useContentStore() // Access progress data from the store
+  const { progress, percentageDifferences } = useSessionStore() // Access progress data from the store
 
   // Use useMemo to transform progress data only when it changes
   const barData = useMemo(() => {

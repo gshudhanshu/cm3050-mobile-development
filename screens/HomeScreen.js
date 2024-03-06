@@ -8,7 +8,8 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
-import React, { useState } from 'react'
+
+import React, { useEffect, useState } from 'react'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
 import { RFValue } from 'react-native-responsive-fontsize'
@@ -22,8 +23,53 @@ import FeelingEmoji5 from '../assets/feelings/feeling-emoji-5'
 import FeelingEmoji6 from '../assets/feelings/feeling-emoji-6'
 import SessionCard from '../components/SessionCard'
 
+import useSessionStore from '../store/useSessionStore'
+import useWellnessStore from '../store/useWellnessStore'
+import useAuthStore from '../store/useAuthStore'
+import { useNavigation, useIsFocused } from '@react-navigation/native'
+import Loading from '../components/common/Loading'
+
+const FeelingEmojis = [
+  FeelingEmoji1,
+  FeelingEmoji2,
+  FeelingEmoji3,
+  FeelingEmoji4,
+  FeelingEmoji5,
+  FeelingEmoji6,
+]
+
 export default function HomeScreen() {
+  const navigation = useNavigation()
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false)
+  // const [selectedMood, setSelectedMood] = useState(null)
+
+  const { dailyQuote, fetchQuote, setUserMood, fetchUserMood, userMood } =
+    useWellnessStore()
+  const { user } = useAuthStore()
+
+  const {
+    fetchPopularSessions,
+    fetchCuratedSessions,
+    popularSessions,
+    curatedSessions,
+  } = useSessionStore()
+  // const isFocused = useIsFocused()
+
+  useEffect(() => {
+    fetchPopularSessions()
+    fetchCuratedSessions()
+    fetchQuote()
+  }, [])
+
+  useEffect(() => {
+    if (user && user.uid) fetchUserMood(user.uid)
+  }, [user?.uid])
+
+  const handleSelectMood = (moodIndex) => {
+    setUserMood(user.uid, moodIndex)
+  }
+
+  if (!user) return <Loading />
 
   return (
     <SafeAreaView style={GlobalStyles.safeAreaContainer}>
@@ -47,24 +93,18 @@ export default function HomeScreen() {
               How're you feeling today?
             </CText>
             <View style={styles.feelingsContainer}>
-              <TouchableOpacity>
-                <FeelingEmoji1 width={RFValue(40)} />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FeelingEmoji2 width={RFValue(40)} />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FeelingEmoji3 width={RFValue(40)} />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FeelingEmoji4 width={RFValue(40)} />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FeelingEmoji5 width={RFValue(40)} />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FeelingEmoji6 width={RFValue(40)} />
-              </TouchableOpacity>
+              {FeelingEmojis.map((EmojiComponent, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleSelectMood(index + 1)}
+                >
+                  <EmojiComponent
+                    width={RFValue(40)}
+                    gray={userMood !== index + 1}
+                    style={{}}
+                  />
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
           {/* Daily Quote */}
@@ -74,14 +114,14 @@ export default function HomeScreen() {
                 Today's Quote
               </CText>
               <CText numberOfLines={1} weight='semiBold' style={styles.Quote}>
-                The only way to do great work is to love what you do.
+                {dailyQuote.quote}
               </CText>
             </View>
             <TouchableOpacity style={[GlobalStyles.button, styles.viewButton]}>
               <CText style={[GlobalStyles.buttonText]}>View</CText>
             </TouchableOpacity>
           </View>
-          {/* Trending sessions */}
+          {/* Popular sessions */}
           <View style={styles.container}>
             <View style={GlobalStyles.blockContainer}>
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
@@ -89,28 +129,33 @@ export default function HomeScreen() {
               </CText>
               <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
             </View>
-            <ScrollView directionalLockEnabled={'false'} horizontal={true}>
+            <ScrollView
+              directionalLockEnabled={'false'}
+              horizontal={true}
+              style={{ minWidth: '100%' }}
+            >
               <View style={styles.sessionsContainer}>
-                <SessionCard
-                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
-                  level='Beginner'
-                  title='On the Beach'
-                  type='Guided'
-                  duration='25 min'
-                  onPress={() => {}}
-                />
-                <SessionCard
-                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
-                  level='Beginner'
-                  title='On the Beach'
-                  type='Guided'
-                  duration='25 min'
-                  onPress={() => {}}
-                />
+                {popularSessions.map((session, index) => (
+                  <SessionCard
+                    key={index}
+                    imageUrl={session.thumbnailUrl}
+                    level={session.level}
+                    title={session.title}
+                    type={session.type}
+                    duration={session.duration}
+                    minCardWidth={RFValue(160)}
+                    onPress={() =>
+                      navigation.navigate('SearchTab', {
+                        screen: 'Player',
+                        params: { session: session },
+                      })
+                    }
+                  />
+                ))}
               </View>
             </ScrollView>
           </View>
-          {/* Trending sessions */}
+          {/* Curated sessions */}
           <View style={styles.container}>
             <View style={GlobalStyles.blockContainer}>
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
@@ -118,24 +163,26 @@ export default function HomeScreen() {
               </CText>
               <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
             </View>
-            <ScrollView directionalLockEnabled={'false'} horizontal={true}>
+            <ScrollView
+              directionalLockEnabled={'false'}
+              horizontal={true}
+              style={{ minWidth: '100%' }}
+            >
               <View style={styles.sessionsContainer}>
-                <SessionCard
-                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
-                  level='Beginner'
-                  title='On the Beach'
-                  type='Guided'
-                  duration='25 min'
-                  onPress={() => {}}
-                />
-                <SessionCard
-                  imageUrl='https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s='
-                  level='Beginner'
-                  title='On the Beach'
-                  type='Guided'
-                  duration='25 min'
-                  onPress={() => {}}
-                />
+                {curatedSessions.map((session, index) => (
+                  <SessionCard
+                    key={index}
+                    imageUrl={session.thumbnailUrl}
+                    level={session.level}
+                    title={session.title}
+                    type={session.type}
+                    duration={session.duration}
+                    minCardWidth={RFValue(160)}
+                    onPress={() =>
+                      navigation.navigate('Player', { session: session })
+                    }
+                  />
+                ))}
               </View>
             </ScrollView>
           </View>
@@ -207,5 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     gap: RFValue(15),
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
   },
 })
