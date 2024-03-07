@@ -16,7 +16,9 @@ import {
   Timestamp,
   limit,
 } from 'firebase/firestore'
+import useAuthStore from './useAuthStore'
 
+// Day.js plugins for date manipulation and timezone handling
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import timezone from 'dayjs/plugin/timezone'
@@ -25,6 +27,7 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 
 const useSessionStore = create((set) => ({
+  // Store state initialization
   popularSessions: [],
   curatedSessions: [],
 
@@ -32,12 +35,19 @@ const useSessionStore = create((set) => ({
   sessions: [],
   progress: [],
   todayProgressData: [],
+  // Stores differences in session completion percentages
   percentageDifferences: {
     last7Days: 0,
     last30Days: 0,
     todayCompletedGoalPercentage: 0,
+
+    current7DaysAvg: 0,
+    last7DaysAvg: 0,
+    current30DaysAvg: 0,
+    last30DaysAvg: 0,
   },
 
+  // Fetches all categories
   fetchCategories: async () => {
     const categoriesSnapshot = await getDocs(collection(db, 'categories'))
     const categories = []
@@ -53,11 +63,13 @@ const useSessionStore = create((set) => ({
       categories.push({
         id: doc.id,
         ...categoryData,
-        sessionCount: sessionsSnapshot.docs.length, // Will be 0 if no sessions are found
+        sessionCount: sessionsSnapshot.docs.length,
       })
     }
     set({ categories })
   },
+
+  // Fetches sessions
   fetchSessions: async (category = null) => {
     let sessionsQuery = collection(db, 'sessions')
     if (category) {
@@ -70,14 +82,14 @@ const useSessionStore = create((set) => ({
     }))
     set({ sessions })
   },
-  // fetch single session using its id
+  // Fetch single session using its id
   fetchSession: async (sessionId) => {
     const sessionRef = doc(db, 'sessions', sessionId)
     const sessionDoc = await getDoc(sessionRef)
     return sessionDoc.data()
   },
 
-  // Fetch popular sessions function
+  // Fetches the top 10 sessions ordered by the number of plays
   fetchPopularSessions: async () => {
     const sessionsQuery = query(
       collection(db, 'sessions'),
@@ -92,7 +104,7 @@ const useSessionStore = create((set) => ({
     set({ popularSessions })
   },
 
-  // Fetch curated sessions function
+  // Fetches up to 10 curated sessions
   fetchCuratedSessions: async () => {
     const sessionsQuery = query(
       collection(db, 'sessions'),
@@ -107,10 +119,8 @@ const useSessionStore = create((set) => ({
     set({ curatedSessions })
   },
 
-  // Method to add a new finished session
+  // Adds a completed session to the user's progress and updates session play count
   addFinishedSession: async (userId, sessionData) => {
-    // Step 1: Add the session to the progress collection
-    console.log('sessionRef', sessionRef)
     const sessionRef = doc(db, 'sessions', sessionData.sessionId)
     const progressRef = collection(db, `progress/${userId}/sessions`)
     const newSessionData = {
@@ -120,7 +130,7 @@ const useSessionStore = create((set) => ({
     }
     await addDoc(progressRef, newSessionData)
 
-    // Fetch the current session to update its play count
+    // Update the session's numberOfPlays count
     const currentSessionDoc = await getDoc(sessionRef)
     if (currentSessionDoc.exists()) {
       const currentSessionData = currentSessionDoc.data()
@@ -132,7 +142,7 @@ const useSessionStore = create((set) => ({
       console.log('Session document does not exist!')
     }
 
-    // Step 2: Update user document with streak, total sessions, and total duration
+    // Update user document with streak, total sessions, and total duration
     const userRef = doc(db, 'users', userId)
     const userDoc = await getDoc(userRef)
 
@@ -145,6 +155,7 @@ const useSessionStore = create((set) => ({
     const lastSessionDate = userData.lastSessionDate
       ? userData.lastSessionDate.toDate()
       : null
+
     let {
       longestStreak = 0,
       currentStreak = 0,
@@ -153,14 +164,17 @@ const useSessionStore = create((set) => ({
     } = userData
     const currentDate = new Date()
 
+    // Calculate the current streak
     if (lastSessionDate) {
       const differenceInDays = dayjs(currentDate).diff(
         dayjs(lastSessionDate),
         'day'
       )
-      currentStreak = differenceInDays === 1 ? currentStreak + 1 : 1 // Continue or reset the current streak
+      // Continue or reset the current streak
+      currentStreak = differenceInDays === 1 ? currentStreak + 1 : 1
     } else {
-      currentStreak = 1 // Starting the first streak
+      // Starting the first streak
+      currentStreak = 1
     }
 
     // Update longest streak if the current streak surpasses it
@@ -169,7 +183,7 @@ const useSessionStore = create((set) => ({
 
     // Increment total sessions and total session duration
     totalSessions += 1
-    totalSessionDuration += sessionData.duration // Assuming 'duration' is provided in sessionData in minutes
+    totalSessionDuration += sessionData.duration
 
     // Update the user document with the new data
     await setDoc(
@@ -185,7 +199,7 @@ const useSessionStore = create((set) => ({
     )
   },
 
-  // Method to fetch progress of the last 30 days for a user
+  // Fetch progress of the last 30 days for a user
   fetchProgressLast65DaysAndCalculateAverages: async (userId, dailyGoal) => {
     console.log('Fetching progress for the last 65 days...')
     const today = dayjs()
@@ -202,14 +216,14 @@ const useSessionStore = create((set) => ({
 
     let sessions = snapshot.docs.map((doc) => ({
       ...doc.data(),
-      date: doc.data().date.toDate(), // Convert Timestamp to Date
+      date: doc.data().date.toDate(),
     }))
 
     let todaySessionsData = []
     let pastSessionsData = []
 
     for (const doc of snapshot.docs) {
-      let session = { ...doc.data(), date: doc.data().date.toDate() } // Convert Timestamp to Date
+      let session = { ...doc.data(), date: doc.data().date.toDate() }
 
       // Fetch session details for today's sessions
       if (dayjs(session.date).isSame(today, 'day') && session.sessionRef) {
@@ -223,8 +237,7 @@ const useSessionStore = create((set) => ({
       }
     }
 
-    // Assuming duration is stored in minutes in each session
-    // Adjust the session date format as per your data if needed
+    // Format session data by day
     const formatSessionDataByDay = (sessions) => {
       return sessions.reduce((acc, curr) => {
         const dateKey = dayjs(curr.date).format('YYYY-MM-DD')
@@ -254,9 +267,11 @@ const useSessionStore = create((set) => ({
     // Calculate averages for the current and last 7 and 30 days
     const getAverageForPeriod = (days) => {
       const periodStart = today.subtract(days, 'day')
+      // Filter sessions for the relevant period
       const relevantSessions = dailyTotals.filter(({ date }) =>
         dayjs(date).isAfter(periodStart)
       )
+      // Calculate the total duration for the period
       const total = relevantSessions.reduce(
         (sum, { totalDuration }) => sum + totalDuration,
         0
@@ -264,6 +279,7 @@ const useSessionStore = create((set) => ({
       return relevantSessions.length > 0 ? total / relevantSessions.length : 0
     }
 
+    // Calculate the averages for the current and last 7 and 30 days
     const current7DaysAvg = getAverageForPeriod(7)
     const last7DaysAvg = getAverageForPeriod(14) - current7DaysAvg
     const current30DaysAvg = getAverageForPeriod(30)
@@ -272,6 +288,7 @@ const useSessionStore = create((set) => ({
       last7DaysAvg === 0 ? 100 : (current7DaysAvg / last7DaysAvg) * 100
     const last30Days =
       last30DaysAvg === 0 ? 100 : (current30DaysAvg / last30DaysAvg) * 100
+
     set({
       todayProgressData: todaySessionsData,
       progress: [...todaySessionsData, ...pastSessionsData],

@@ -7,6 +7,7 @@ import theme from '../../utils/theme'
 import TextCard from '../TextCard'
 import CText from '../common/CText'
 import useSessionStore from '../../store/useSessionStore'
+import useWellnessStore from '../../store/useWellnessStore'
 
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -17,6 +18,7 @@ dayjs.tz.setDefault('Europe/London')
 
 export default function WeekComponent() {
   const { progress, percentageDifferences } = useSessionStore() // Access progress data from the store
+  const { averageMoodLast7Days, averageMoodLast30Days } = useWellnessStore()
 
   // Use useMemo to transform progress data only when it changes
   const barData = useMemo(() => {
@@ -68,8 +70,17 @@ export default function WeekComponent() {
               Weekly progress
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
-              On average, you completed {percentageDifferences.last7Days}% more
-              sessions this week
+              On average, you completed {averageMoodLast7Days}% more sessions
+              this week
+            </CText>
+            <CText
+              weight='semiBold'
+              style={[GlobalStyles.blockTitle, styles.blockText]}
+            >
+              Weekly mood
+            </CText>
+            <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
+              On average, your mood was {averageMoodLast7Days}
             </CText>
           </View>
         </View>

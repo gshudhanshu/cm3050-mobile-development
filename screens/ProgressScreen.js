@@ -24,11 +24,14 @@ import MonthComponent from '../components/progress-tabs/MonthComponent'
 import WeekComponent from '../components/progress-tabs/WeekComponent'
 import useAuthStore from '../store/useAuthStore'
 import useSessionStore from '../store/useSessionStore'
+import useWellnessStore from '../store/useWellnessStore'
 
 export default function ProgressScreen() {
   const navigation = useNavigation()
   const { user, profile } = useAuthStore()
   const { fetchProgressLast65DaysAndCalculateAverages } = useSessionStore()
+  const { fetchMoodAverages } = useWellnessStore()
+
   const isFocused = useIsFocused()
 
   const layout = useWindowDimensions()
@@ -61,6 +64,7 @@ export default function ProgressScreen() {
   useEffect(() => {
     if (user !== null && profile !== null) {
       fetchProgressLast65DaysAndCalculateAverages(user.uid, profile.dailyGoal)
+      fetchMoodAverages(user.uid)
     }
   }, [user, profile, isFocused])
 

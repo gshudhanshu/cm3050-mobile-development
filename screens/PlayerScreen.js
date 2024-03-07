@@ -43,7 +43,8 @@ dayjs.tz.setDefault('Europe/London')
 
 export default function PlayerScreen({ route }) {
   const { addFinishedSession } = useSessionStore()
-  const { user } = useAuthStore()
+
+  const { user, getUserProfile } = useAuthStore()
   const { session } = route.params
   const [sound, setSound] = useState(null)
   const [playbackStatus, setPlaybackStatus] = useState({})
@@ -90,7 +91,7 @@ export default function PlayerScreen({ route }) {
     }
   }
 
-  const handleAudioPlaybackStatusUpdate = (status) => {
+  const handleAudioPlaybackStatusUpdate = async (status) => {
     setPlaybackStatus(status)
     setIsPlaying(status.isPlaying)
     if (status.isPlaying) {
@@ -106,7 +107,11 @@ export default function PlayerScreen({ route }) {
         sessionId: session.id,
       }
 
-      addFinishedSession(user.uid, sessionData)
+      // Add the finished session to the user's progress
+      await addFinishedSession(user.uid, sessionData)
+      // Update user state with the new user data
+      await getUserProfile(user.uid)
+      console.log('Profile', useAuthStore.getState().profile)
     }
   }
 

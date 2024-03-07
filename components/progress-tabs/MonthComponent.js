@@ -7,6 +7,7 @@ import theme from '../../utils/theme'
 import TextCard from '../TextCard'
 import CText from '../common/CText'
 import useSessionStore from '../../store/useSessionStore'
+import useWellnessStore from '../../store/useWellnessStore'
 
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -17,6 +18,8 @@ dayjs.tz.setDefault('Europe/London')
 
 export default function MonthComponent() {
   const { progress, percentageDifferences } = useSessionStore()
+  const { averageMoodLast30Days } = useWellnessStore()
+
   // Aggregate and prepare data for the past 30 days
   const barData = useMemo(() => {
     const today = dayjs()
@@ -70,6 +73,15 @@ export default function MonthComponent() {
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
               On average, you completed {percentageDifferences.last30Days}% more
               sessions this month
+            </CText>
+            <CText
+              weight='semiBold'
+              style={[GlobalStyles.blockTitle, styles.blockText]}
+            >
+              Monthly mood
+            </CText>
+            <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
+              On average, your mood was {averageMoodLast30Days}
             </CText>
           </View>
         </View>

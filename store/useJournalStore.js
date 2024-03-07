@@ -16,6 +16,7 @@ import { uriToBlob } from '../utils/utils'
 const useJournalStore = create((set, get) => ({
   journals: [],
 
+  // upload a journal image to Firebase Storage
   uploadJournalImage: async (userId, imageUri) => {
     const blob = await uriToBlob(imageUri)
     const imageName = `journal-${Date.now()}`
@@ -26,6 +27,7 @@ const useJournalStore = create((set, get) => ({
     return imageUrl
   },
 
+  // fetch journals from Firestore
   fetchJournals: async (userId) => {
     // Update the Firestore path to fetch from the user-specific subcollection
     const querySnapshot = await getDocs(
@@ -38,30 +40,40 @@ const useJournalStore = create((set, get) => ({
     set({ journals })
   },
 
+  // add a journal to Firestore
   addJournal: async (userId, journalData) => {
+    // If the journal has an image, upload it to Firebase Storage
     if (journalData.imageUri) {
       const imageUrl = await get().uploadJournalImage(
         userId,
         journalData.imageUri
       )
-      journalData.imageUrl = imageUrl // Replace the local URI with the remote URL
+      journalData.imageUrl = imageUrl
     }
-    delete journalData.imageUri // Remove the local URI from the data
+
+    // Remove the local URI from the data
+    delete journalData.imageUri
     journalData.date = Timestamp.fromDate(journalData.date)
+
     // Update the Firestore path to save to the user-specific subcollection
     const newJournalRef = await addDoc(
       collection(db, `journals/${userId}/myjournals`),
       journalData
     )
-    get().fetchJournals(userId) // Refresh the journals after adding
+
+    // Refresh the journals after adding
+    get().fetchJournals(userId)
     return newJournalRef
   },
 
+  // delete a journal
   deleteJournal: async (userId, journalId) => {
     await deleteDoc(doc(db, `journals/${userId}/myjournals`, journalId))
-    get().fetchJournals(userId) // Refresh the journals after deleting
+    // Refresh the journals after deleting
+    get().fetchJournals(userId)
   },
 
+  // edit a journal
   editJournal: async (userId, journalId, journalData) => {
     if (journalData.imageUri) {
       const imageUrl = await get().uploadJournalImage(
@@ -75,9 +87,12 @@ const useJournalStore = create((set, get) => ({
 
     const journalRef = doc(db, `journals/${userId}/myjournals`, journalId)
     await updateDoc(journalRef, journalData)
-    get().fetchJournals(userId) // Refresh the journals after editing
+
+    // Refresh the journals after editing
+    get().fetchJournals(userId)
   },
 
+  // Fetch a single journal
   fetchSingleJournal: async (userId, journalId) => {
     const journalRef = doc(db, `journals/${userId}/myjournals`, journalId)
     const docSnap = await getDoc(journalRef)
