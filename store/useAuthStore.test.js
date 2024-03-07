@@ -1,38 +1,52 @@
-// Import dependencies
-import useAuthStore from './useAuthStore'
+import useAuthStore from './useAuthStore' // Update this path
+import { db, storage } from '../firebase/firebase'
 import { uriToBlob } from '../utils/utils'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-
-// Mock the necessary methods and modules
-jest.mock('../utils/utils') // Mock uriToBlob
-jest.mock('firebase/storage') // Mock Firebase Storage
 
 describe('useAuthStore', () => {
-  beforeEach(() => {
-    // Reset all mocks before each test
-    jest.clearAllMocks()
+  it('should upload profile picture and update profile', async () => {
+    const userId = 'user123'
+    const uri = 'https://placehold.co/600x400.png'
+    const store = useAuthStore.getState()
+
+    const url = await store.uploadProfilePicture(userId, uri)
+
+    expect(url).toBe('test-url')
+    expect(store.profile).toEqual({ photoURL: 'mocked-url' })
+    expect(uriToBlob).toHaveBeenCalledWith(uri)
   })
 
-  it('uploadProfilePicture updates profile with photo URL', async () => {
-    // Setup mocks
-    const mockUri = 'file:///path/to/image.png'
-    const mockUserId = 'user123'
-    const mockPhotoURL = 'https://example.com/profile.jpg'
-    uriToBlob.mockResolvedValueOnce('mockBlob')
-    uploadBytes.mockResolvedValueOnce({})
-    getDownloadURL.mockResolvedValueOnce(mockPhotoURL)
+  it('should save user profile data to Firestore and update profile', async () => {
+    const userId = 'user123'
+    const profileData = { name: 'John Doe' }
+    const store = useAuthStore.getState()
 
-    // Act
-    const state = useAuthStore.getState()
-    const url = await state.uploadProfilePicture(mockUserId, mockUri)
+    await store.saveUserProfile(userId, profileData)
 
-    // Assert
-    expect(uriToBlob).toHaveBeenCalledWith(mockUri)
-    expect(uploadBytes).toHaveBeenCalled()
-    expect(getDownloadURL).toHaveBeenCalled()
-    expect(url).toEqual(mockPhotoURL)
-    expect(state.profile).toEqual(
-      expect.objectContaining({ photoURL: mockPhotoURL })
-    )
+    expect(store.profile).toEqual(profileData)
+    // Add more assertions as needed to verify Firestore interactions
+  })
+
+  it('should fetch user profile data', async () => {
+    const userId = 'user123'
+    const store = useAuthStore.getState()
+
+    const profileData = await store.getUserProfile(userId)
+
+    expect(profileData).toEqual({})
+    expect(store.profile).toEqual({})
+    // Add more assertions as needed to verify Firestore interactions
+  })
+
+  it("should set a daily goal in the user's profile", async () => {
+    const goalValue = '10,000 steps'
+    const store = useAuthStore.createState({
+      user: { uid: 'user123' },
+      profile: {},
+    })
+
+    await store.setDailyGoal(goalValue)
+
+    expect(store.profile.dailyGoal).toEqual(goalValue)
+    // Add more assertions as needed to verify Firestore interactions
   })
 })

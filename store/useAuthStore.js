@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { db, storage } from '../firebase/firebase.js'
+import { db, storage } from '../firebase/firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { uriToBlob } from '../utils/utils.js'
