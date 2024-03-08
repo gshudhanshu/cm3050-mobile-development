@@ -26,6 +26,7 @@ const SessionCard = ({
     <TouchableOpacity
       style={[styles.cardContainer, { minWidth: minCardWidth }]}
       onPress={onPress}
+      testID='session-card'
     >
       <ImageBackground
         source={{

@@ -67,7 +67,7 @@
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-native.*)"
     ],
     "testEnvironment": "node",
     "setupFiles": [
@@ -76,6 +76,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
+    "@babel/plugin-transform-runtime": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
     "@firebase/rules-unit-testing": "^3.0.1",
     "@testing-library/react": "^14.2.1",
@@ -83,7 +84,8 @@
     "babel-jest": "^29.7.0",
     "firebase-mock": "^2.3.2",
     "firestore-jest-mock": "^0.24.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "metro-react-native-babel-preset": "^0.77.0"
   },
   "private": true
 }

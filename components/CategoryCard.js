@@ -13,13 +13,18 @@ import CText from './common/CText'
 
 const CategoryCard = ({ onPress, imageUrl, category, numberOfSessions }) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.cardContainer}
+      onPress={onPress}
+      testID='category-card-touchable'
+    >
       <ImageBackground
         source={{
           uri: imageUrl,
         }}
         resizeMode='cover'
         style={styles.backgroundImage}
+        testID='image-background'
       >
         <View style={styles.overlay}>
           <BlurView

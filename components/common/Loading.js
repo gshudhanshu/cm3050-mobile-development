@@ -6,6 +6,7 @@ import * as Progress from 'react-native-progress'
 export default function Loading() {
   return (
     <View
+      testID='loading-view'
       style={{
         flex: 1,
         justifyContent: 'center',

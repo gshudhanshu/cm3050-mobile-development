@@ -39,6 +39,7 @@ const Header = ({ showBack, title, useLogo }) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.iconButton}
+            testID='back-button'
           >
             <BackIcon
               style={styles.iconButton}
@@ -51,7 +52,7 @@ const Header = ({ showBack, title, useLogo }) => {
         )}
       </View>
       {useLogo ? (
-        <Logo style={GlobalStyles.logo} />
+        <Logo style={GlobalStyles.logo} testID='logo' />
       ) : (
         <CText style={styles.screenTitle}>{title}</CText>
       )}
@@ -59,6 +60,7 @@ const Header = ({ showBack, title, useLogo }) => {
       <TouchableOpacity
         onPress={() => navigation.navigate('Profile')}
         style={styles.iconButton}
+        testID='profile-avatar'
       >
         <Image
           source={{

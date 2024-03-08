@@ -6,7 +6,11 @@ import theme from '../utils/theme'
 
 const JournalCard = ({ imageUri, date, title, description, onButtonPress }) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onButtonPress}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onButtonPress}
+      testID='journal-card-button'
+    >
       <View style={styles.imageContainer}>
         <Image source={{ uri: imageUri }} style={styles.image} />
       </View>
