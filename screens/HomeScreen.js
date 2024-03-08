@@ -99,6 +99,7 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   key={index}
                   onPress={() => handleSelectMood(index + 1)}
+                  testID={`mood-emoji-${index + 1}`}
                 >
                   <EmojiComponent
                     width={RFValue(40)}
@@ -132,13 +133,18 @@ export default function HomeScreen() {
             onRequestClose={() => {
               setModalVisible(!modalVisible)
             }}
+            testID='quote-modal'
           >
             <View style={modalStyles.centeredView}>
               <View style={modalStyles.modalView}>
                 <CText weight='semiBold' style={modalStyles.modalTitle}>
                   Today's Quote
                 </CText>
-                <CText weight='medium' style={modalStyles.title}>
+                <CText
+                  weight='medium'
+                  style={modalStyles.title}
+                  testID='complete-quote'
+                >
                   {dailyQuote.quote}
                 </CText>
                 <CText weight='semiBold' style={modalStyles.author}>
@@ -198,7 +204,7 @@ export default function HomeScreen() {
           <View style={styles.container}>
             <View style={GlobalStyles.blockContainer}>
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
-                Curated Selections
+                Curated Sessions
               </CText>
               <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
             </View>

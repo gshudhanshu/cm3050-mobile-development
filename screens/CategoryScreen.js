@@ -21,54 +21,54 @@ import SessionCard from '../components/SessionCard'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import useSessionStore from '../store/useSessionStore'
 
-const sessionsData = [
-  // imageUrl, level, title, type, duration, onPress
-  {
-    id: '1',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    level: 'Beginner',
-    type: 'Guided',
-    duration: 25,
-    title: 'Meditation',
-  },
-  {
-    id: '2',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    level: 'Beginner',
-    type: 'Guided',
-    duration: 25,
-    title: 'Meditation',
-  },
-  {
-    id: '3',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    level: 'Beginner',
-    type: 'Guided',
-    duration: 25,
-    title: 'Meditation',
-  },
-  {
-    id: '4',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    level: 'Beginner',
-    type: 'Guided',
-    duration: 25,
-    title: 'Meditation',
-  },
-  {
-    id: '5',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    level: 'Beginner',
-    type: 'Guided',
-    duration: 25,
-    title: 'Meditation',
-  },
-]
+// const sessionsData = [
+//   // imageUrl, level, title, type, duration, onPress
+//   {
+//     id: '1',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     level: 'Beginner',
+//     type: 'Guided',
+//     duration: 25,
+//     title: 'Meditation',
+//   },
+//   {
+//     id: '2',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     level: 'Beginner',
+//     type: 'Guided',
+//     duration: 25,
+//     title: 'Meditation',
+//   },
+//   {
+//     id: '3',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     level: 'Beginner',
+//     type: 'Guided',
+//     duration: 25,
+//     title: 'Meditation',
+//   },
+//   {
+//     id: '4',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     level: 'Beginner',
+//     type: 'Guided',
+//     duration: 25,
+//     title: 'Meditation',
+//   },
+//   {
+//     id: '5',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     level: 'Beginner',
+//     type: 'Guided',
+//     duration: 25,
+//     title: 'Meditation',
+//   },
+// ]
 
 export default function CategoryScreen({ route }) {
   const [searchQuery, setSearchQuery] = useState('')
