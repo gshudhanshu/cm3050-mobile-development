@@ -23,11 +23,13 @@ const useAuthStore = create((set, get) => ({
     await uploadBytes(storageRef, blob)
     const url = await getDownloadURL(storageRef)
     const profileData = { photoURL: url }
+    console.log('Profile Data before saving:', profileData)
     await get().saveUserProfile(userId, profileData)
     // Update local state with the new profile URL
     set((state) => ({
       profile: { ...state.profile, ...profileData },
     }))
+    console.log('Store state after update:', get().profile)
     return url
   },
 

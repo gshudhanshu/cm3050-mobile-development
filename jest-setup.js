@@ -3,32 +3,75 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 )
 
-// Mock implementations for Firebase services
+const dummyUserProfile = {
+  name: 'John Doe',
+  email: 'johndoe@example.com',
+  profilePicture: 'mocked-url',
+  dailyGoal: 3000,
+  dob: '04/02/2024',
+  firstName: 'John',
+  lastNmae: 'Doe',
+}
+
 const mockFirestore = jest.fn(() => ({
   collection: jest.fn(() => ({
     doc: jest.fn(() => ({
-      get: jest.fn(() => Promise.resolve({ data: () => ({}) })),
+      get: jest.fn(() =>
+        Promise.resolve({
+          exists: true,
+          data: () => dummyUserProfile,
+        })
+      ),
       set: jest.fn(() => Promise.resolve()),
       update: jest.fn(() => Promise.resolve()),
     })),
-    add: jest.fn(() => Promise.resolve()),
+    add: jest.fn(() => Promise.resolve({ id: 'newDocId' })),
   })),
 }))
 
 const mockAuth = jest.fn(() => ({
   currentUser: {
     uid: 'testUid',
+    email: 'user@example.com',
   },
-  signInWithEmailAndPassword: jest.fn(() => Promise.resolve(true)),
-  createUserWithEmailAndPassword: jest.fn(() => Promise.resolve(true)),
-  signOut: jest.fn(() => Promise.resolve(true)),
-  onAuthStateChanged: jest.fn(),
+  signInWithEmailAndPassword: jest.fn(() =>
+    Promise.resolve({
+      user: {
+        uid: 'testUid',
+        email: 'user@example.com',
+      },
+    })
+  ),
+  createUserWithEmailAndPassword: jest.fn(() =>
+    Promise.resolve({
+      user: {
+        uid: 'testUid',
+        email: 'user@example.com',
+      },
+    })
+  ),
+  signOut: jest.fn(() => Promise.resolve()),
+  onAuthStateChanged: jest.fn((callback) =>
+    callback({
+      uid: 'testUid',
+      email: 'user@example.com',
+    })
+  ),
 }))
 
 const mockStorage = jest.fn(() => ({
   ref: jest.fn(() => ({
-    put: jest.fn(() => Promise.resolve(true)),
-    getDownloadURL: jest.fn(() => Promise.resolve('test-url')),
+    put: jest.fn(() =>
+      Promise.resolve({
+        metadata: {
+          name: 'uploaded-file.jpg',
+          fullPath: 'profilePictures/uploaded-file.jpg',
+        },
+      })
+    ),
+    getDownloadURL: jest.fn(() =>
+      Promise.resolve('https://placehold.co/600x400.png')
+    ),
   })),
 }))
 
@@ -47,16 +90,24 @@ jest.mock('firebase/auth', () => ({
 
 jest.mock('firebase/firestore', () => ({
   getFirestore: mockFirestore,
-  doc: jest.fn(),
-  setDoc: jest.fn(),
-  getDoc: jest.fn(() => Promise.resolve({ data: () => ({}) })),
-  collection: jest.fn(() => ({
-    doc: jest.fn(() => ({
-      set: jest.fn(() => Promise.resolve()),
-      get: jest.fn(() => Promise.resolve({ data: () => ({}) })),
-    })),
-    add: jest.fn(() => Promise.resolve()),
+  doc: jest.fn((db, collectionName, docId) => ({
+    set: jest.fn(() => Promise.resolve()),
+    get: jest.fn(() =>
+      Promise.resolve({
+        exists: true,
+        data: () => dummyUserProfile,
+      })
+    ),
+    update: jest.fn(() => Promise.resolve()),
   })),
+  getDoc: jest.fn(() =>
+    Promise.resolve({
+      exists: () => true,
+      data: () => dummyUserProfile,
+    })
+  ),
+  setDoc: jest.fn(() => Promise.resolve()),
+  collection: mockFirestore,
 }))
 
 jest.mock('firebase/storage', () => ({
@@ -64,10 +115,10 @@ jest.mock('firebase/storage', () => ({
   ref: jest.fn(),
   uploadBytes: jest.fn(() =>
     Promise.resolve({
-      metadata: { name: 'test-file' },
+      metadata: { name: 'mocked-file' },
     })
   ),
-  getDownloadURL: jest.fn(() => Promise.resolve('test-url')),
+  getDownloadURL: jest.fn(() => Promise.resolve('mocked-url')),
 }))
 
 // Exporting mocked Firebase services for use in tests
