@@ -1,97 +1,61 @@
 import useJournalStore from './useJournalStore'
 
-// describe('useJournalStore', () => {
-//   beforeEach(() => {
-//     // Reset the store to its initial state before each test to avoid state leakage between tests
-//     act(() => useJournalStore.setState({ journals: [] }, true))
-//   })
+const dummyJournal = {
+  title: 'My Journal',
+  description: 'This is a journal entry',
+  date: new Date(),
+  imageUrl: 'mocked-url',
+}
 
-//   it('should upload a journal image and return the URL', async () => {
-//     const userId = 'user1'
-//     const imageUri = 'path/to/local/image.jpg'
-//     const imageUrl = await useJournalStore
-//       .getState()
-//       .uploadJournalImage(userId, imageUri)
+describe('useJournalStore', () => {
+  // Reset store state before each test
+  beforeEach(() => {
+    useJournalStore.setState({
+      journals: [],
+    })
+  })
 
-//     expect(imageUrl).toEqual('https://example.com/uploaded-image.jpg')
-//   })
+  it('should upload a journal image and return its URL', async () => {
+    const userId = 'testUid'
+    const imageUri = 'fake-uri'
+    const expectedImageUrl = 'mocked-url'
+    uriToBlob.mockResolvedValueOnce(new Blob())
 
-//   it('should fetch journals for a user', async () => {
-//     const userId = 'user1'
-//     await act(() => useJournalStore.getState().fetchJournals(userId))
+    const imageUrl = await useJournalStore
+      .getState()
+      .uploadJournalImage(userId, imageUri)
 
-//     const journals = useJournalStore.getState().journals
-//     expect(journals.length).toBeGreaterThan(0)
-//     expect(journals[0].id).toBeDefined()
-//     expect(journals[0].title).toBeDefined()
-//   })
+    expect(imageUrl).toBe(expectedImageUrl)
+    expect(uriToBlob).toHaveBeenCalledWith(imageUri)
+  })
 
-//   it('should add a new journal entry', async () => {
-//     const userId = 'user1'
-//     const newJournal = {
-//       title: 'New Journal Entry',
-//       description: 'Description of the new entry',
-//       date: new Date(),
-//       imageUri: 'path/to/new/image.jpg',
-//     }
+  it('should add a journal and fetch journals', async () => {
+    const userId = 'testUid'
+    const journalData = { title: 'Test Journal', date: new Date() }
+    const addJournal = useJournalStore.getState().addJournal
 
-//     await act(() => useJournalStore.getState().addJournal(userId, newJournal))
+    await addJournal(userId, journalData)
 
-//     const journals = useJournalStore.getState().journals
-//     expect(journals.length).toBeGreaterThan(0)
-//     expect(
-//       journals.some((journal) => journal.title === newJournal.title)
-//     ).toBeTruthy()
-//   })
+    const journals = useJournalStore.getState().journals
+    expect(journals.length).toBeGreaterThan(0)
+    expect(journals[0].title).toEqual(journalData.title)
+  })
 
-//   it('should delete a journal entry', async () => {
-//     const userId = 'user1'
-//     const journalIdToDelete = '1' // Assuming this ID exists from your dummy data
+  it('should delete a journal and update the journal list', async () => {
+    const userId = 'testUid'
+    const journalId = 'newJournalId'
+    const deleteJournal = useJournalStore.getState().deleteJournal
 
-//     await act(() =>
-//       useJournalStore.getState().deleteJournal(userId, journalIdToDelete)
-//     )
+    // First, mock adding a journal to ensure there's something to delete
+    await useJournalStore.getState().addJournal(userId, {
+      title: 'Journal to Delete',
+      date: Timestamp.fromDate(new Date()),
+    })
+    // Then, delete the journal
+    await deleteJournal(userId, journalId)
 
-//     const journals = useJournalStore.getState().journals
-//     expect(
-//       journals.some((journal) => journal.id === journalIdToDelete)
-//     ).toBeFalsy()
-//   })
-
-//   it('should edit a journal entry', async () => {
-//     const userId = 'user1'
-//     const journalIdToEdit = '2' // Assuming this ID exists from your dummy data
-//     const updatedJournalData = {
-//       title: 'Updated Journal Title',
-//       description: 'Updated description',
-//       // No need to update date or imageUrl for this test
-//     }
-
-//     await act(() =>
-//       useJournalStore
-//         .getState()
-//         .editJournal(userId, journalIdToEdit, updatedJournalData)
-//     )
-
-//     const journals = useJournalStore.getState().journals
-//     const updatedJournal = journals.find(
-//       (journal) => journal.id === journalIdToEdit
-//     )
-//     expect(updatedJournal).toBeDefined()
-//     expect(updatedJournal.title).toEqual(updatedJournalData.title)
-//     expect(updatedJournal.description).toEqual(updatedJournalData.description)
-//   })
-
-//   it('should fetch a single journal entry', async () => {
-//     const userId = 'user1'
-//     const journalId = '1' // Assuming this ID exists
-
-//     const journal = await useJournalStore
-//       .getState()
-//       .fetchSingleJournal(userId, journalId)
-
-//     expect(journal).toBeDefined()
-//     expect(journal.id).toEqual(journalId)
-//     expect(journal.title).toBeDefined()
-//   })
-// })
+    const journals = useJournalStore.getState().journals
+    // Assuming delete is successful, the journal with journalId should not exist
+    expect(journals.find((journal) => journal.id === journalId)).toBeUndefined()
+  })
+})
