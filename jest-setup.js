@@ -184,11 +184,15 @@ jest.mock('firebase/firestore', () => ({
       data: docSnapshot.data,
     }
   }),
+
   setDoc: jest.fn((docRef, data, { merge } = {}) =>
     docRef.set(data, { merge })
   ),
   collection: jest.fn((db, collectionName) => db.collection(collectionName)),
   addDoc: jest.fn((collectionRef, data) => collectionRef.add(data)),
+  Timestamp: {
+    fromDate: jest.fn((date) => ({ toDate: () => date })),
+  },
 }))
 
 jest.mock('firebase/storage', () => ({

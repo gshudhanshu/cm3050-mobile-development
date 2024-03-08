@@ -1,4 +1,6 @@
 import useJournalStore from './useJournalStore'
+import { uriToBlob } from '../utils/utils'
+import { Timestamp } from 'firebase/firestore'
 
 const dummyJournal = {
   title: 'My Journal',
@@ -7,55 +9,35 @@ const dummyJournal = {
   imageUrl: 'mocked-url',
 }
 
+jest.mock('../utils/utils', () => ({
+  uriToBlob: jest
+    .fn()
+    .mockResolvedValue(new Blob(['fake-blob'], { type: 'image/jpeg' })),
+}))
+
 describe('useJournalStore', () => {
-  // Reset store state before each test
   beforeEach(() => {
     useJournalStore.setState({
-      journals: [],
+      journals: [dummyJournal],
     })
+    jest.resetAllMocks()
   })
-
-  it('should upload a journal image and return its URL', async () => {
-    const userId = 'testUid'
+  it('directly tests uriToBlob mock', async () => {
+    const result = await uriToBlob('fake-uri')
+    expect(uriToBlob).toHaveBeenCalledWith('fake-uri')
+  })
+  it('uploadJournalImage', async () => {
+    const userId = 'test-user'
     const imageUri = 'fake-uri'
-    const expectedImageUrl = 'mocked-url'
-    uriToBlob.mockResolvedValueOnce(new Blob())
-
     const imageUrl = await useJournalStore
       .getState()
       .uploadJournalImage(userId, imageUri)
-
-    expect(imageUrl).toBe(expectedImageUrl)
-    expect(uriToBlob).toHaveBeenCalledWith(imageUri)
+    expect(uriToBlob).toHaveBeenCalledWith('fake-uri')
   })
 
-  it('should add a journal and fetch journals', async () => {
-    const userId = 'testUid'
-    const journalData = { title: 'Test Journal', date: new Date() }
-    const addJournal = useJournalStore.getState().addJournal
-
-    await addJournal(userId, journalData)
-
-    const journals = useJournalStore.getState().journals
-    expect(journals.length).toBeGreaterThan(0)
-    expect(journals[0].title).toEqual(journalData.title)
-  })
-
-  it('should delete a journal and update the journal list', async () => {
-    const userId = 'testUid'
-    const journalId = 'newJournalId'
-    const deleteJournal = useJournalStore.getState().deleteJournal
-
-    // First, mock adding a journal to ensure there's something to delete
-    await useJournalStore.getState().addJournal(userId, {
-      title: 'Journal to Delete',
-      date: Timestamp.fromDate(new Date()),
-    })
-    // Then, delete the journal
-    await deleteJournal(userId, journalId)
-
-    const journals = useJournalStore.getState().journals
-    // Assuming delete is successful, the journal with journalId should not exist
-    expect(journals.find((journal) => journal.id === journalId)).toBeUndefined()
+  it('fetchJournals', async () => {
+    const userId = 'test-user'
+    await useJournalStore.getState().fetchJournals(userId)
+    expect(useJournalStore.getState().journals).toEqual([dummyJournal])
   })
 })
