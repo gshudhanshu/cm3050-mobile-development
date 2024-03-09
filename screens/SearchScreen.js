@@ -69,7 +69,6 @@ export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    console.log('SearchScreen mounted')
     fetchCategories()
   }, [isFocused])
 
