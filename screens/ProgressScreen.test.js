@@ -1,12 +1,13 @@
 // ProgressScreen.test.js
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react-native'
-import ProgressScreen from './ProgressScreen' // Adjust the import path as needed
+import ProgressScreen from './ProgressScreen'
 import * as useAuthStoreModule from '../store/useAuthStore'
 import * as useSessionStoreModule from '../store/useSessionStore'
 import * as useWellnessStoreModule from '../store/useWellnessStore'
 import { useIsFocused } from '@react-navigation/native'
 
+// Mock the external hooks and modules
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
   useIsFocused: jest.fn(),

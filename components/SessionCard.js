@@ -28,6 +28,7 @@ const SessionCard = ({
       onPress={onPress}
       testID='session-card'
     >
+      {/* Image background for the card */}
       <ImageBackground
         source={{
           uri: imageUrl,
@@ -35,8 +36,10 @@ const SessionCard = ({
         resizeMode='cover'
         style={styles.cardBackgroundImage}
       >
+        {/* Overlay for the card */}
         <View style={styles.cardOverlay}>
           <View style={styles.cardContent}>
+            {/* Blur view for the level tag */}
             <BlurView
               intensity={50}
               style={styles.levelTagBlur}
@@ -44,6 +47,7 @@ const SessionCard = ({
             >
               <CText style={styles.levelText}>{level}</CText>
             </BlurView>
+            {/* Blur view for the session info */}
             <BlurView
               intensity={50}
               style={styles.sessionInfoBlur}
@@ -56,6 +60,7 @@ const SessionCard = ({
               >
                 {title}
               </CText>
+              {/* Container for session type and duration */}
               <View style={styles.sessionDetails}>
                 <View style={styles.sessionTypeContainer}>
                   <SpeakerIcon stroke={theme.colors.white} width={15} />

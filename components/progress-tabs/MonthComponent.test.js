@@ -1,8 +1,9 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import MonthComponent from './MonthComponent' // Adjust the import path as needed
-import 'react-native-gifted-charts' // Import the module to mock
+import MonthComponent from './MonthComponent'
+import 'react-native-gifted-charts'
 
+// Mock the external hooks and modules
 jest.mock('react-native-gifted-charts', () => ({
   PieChart: () => 'PieChart',
   BarChart: () => 'BarChart',
@@ -11,11 +12,9 @@ jest.mock('react-native-gifted-charts', () => ({
 jest.mock('../../store/useSessionStore', () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    progress: [
-      // Mock some session data
-    ],
+    progress: [],
     percentageDifferences: {
-      last30Days: 20, // Example value
+      last30Days: 20,
     },
   })),
 }))
@@ -23,7 +22,7 @@ jest.mock('../../store/useSessionStore', () => ({
 jest.mock('../../store/useWellnessStore', () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    averageMoodLast30Days: 3.5, // Example value
+    averageMoodLast30Days: 3.5,
   })),
 }))
 

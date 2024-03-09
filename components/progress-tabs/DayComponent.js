@@ -24,13 +24,14 @@ import { useIsFocused } from '@react-navigation/native'
 export default function DayComponent() {
   const isFocused = useIsFocused()
   const { setDailyGoal, profile, user } = useAuthStore()
-
+  // State variables for modal and goal value
   const [modalVisible, setModalVisible] = useState(false)
   const [goalValue, setGoalValue] = useState('')
 
   const { percentageDifferences, progress, todayProgressData } =
     useSessionStore()
 
+  // State variable for pie chart data
   const [pieData, setPieData] = useState([
     {
       value: 100,
@@ -45,6 +46,7 @@ export default function DayComponent() {
   ])
 
   useEffect(() => {
+    // Update pie chart data based on progress
     if (progress) {
       let completed = percentageDifferences.todayCompletedGoalPercentage
       if (percentageDifferences.todayCompletedGoalPercentage > 100) {
@@ -65,14 +67,17 @@ export default function DayComponent() {
     }
   }, [progress, isFocused, user.dailyGoal])
 
+  // Render loading screen while data is being fetched
   if (progress === null || percentageDifferences === null || profile === null) {
     return <Loading />
   }
 
+  // Event handler for opening modal
   const handleEditPress = () => {
     setModalVisible(true)
   }
 
+  // Event handler for updating goal value
   const handleGoalChange = (text) => {
     // Remove any non-numeric characters from the input
     const numericValue = text.replace(/[^0-9]/g, '')
@@ -80,17 +85,20 @@ export default function DayComponent() {
     setGoalValue(parseInt(numericValue, 10))
   }
 
+  // Event handler for submitting goal
   const handleSubmit = async () => {
     try {
       await setDailyGoal(goalValue * 60)
     } catch (error) {
       Alert.alert('Error', 'Failed to set daily goal')
     }
-    setModalVisible(false) // Close the modal after submission
+    // Close the modal after submission
+    setModalVisible(false)
   }
 
   return (
     <View style={[styles.container]}>
+      {/* Pie chart for progress */}
       <PieChart
         data={pieData}
         donut
@@ -115,7 +123,7 @@ export default function DayComponent() {
         }}
       />
 
-      {/* Add your components for daily completed sessions and editable daily goal here */}
+      {/* Container for sessions and goal */}
       <View style={[styles.tabContainer]}>
         {/* Trending sessions */}
         <View style={styles.sessionsContainer}>
@@ -142,7 +150,7 @@ export default function DayComponent() {
             </View>
           </ScrollView>
         </View>
-        {/* Set daily goal use a modal for edit */}
+        {/* Set daily goal */}
         <TextCard
           title='My daily goal'
           subTitle={profile.dailyGoal / 60 + ' Minutes'}
@@ -150,6 +158,7 @@ export default function DayComponent() {
           onButtonPress={handleEditPress}
         />
       </View>
+      {/* Modal for editing daily goal */}
       <View style={styles.centeredView}>
         <Modal
           animationType='slide'

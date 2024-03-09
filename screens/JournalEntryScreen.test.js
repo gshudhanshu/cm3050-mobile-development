@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react-native'
-import JournalEntryScreen from './JournalEntryScreen' // Adjust the import path as needed
+import JournalEntryScreen from './JournalEntryScreen'
 import * as ImagePicker from 'expo-image-picker'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { useNavigation } from '@react-navigation/native'

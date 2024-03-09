@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import DayComponent from './DayComponent' // Adjust the import path as needed.
-import 'react-native-gifted-charts' // Import the module to mock
+import DayComponent from './DayComponent'
+import 'react-native-gifted-charts'
 
 jest.mock('react-native-gifted-charts', () => ({
   PieChart: () => 'PieChart',
@@ -10,7 +10,7 @@ jest.mock('react-native-gifted-charts', () => ({
 
 // Mock the external hooks and modules
 jest.mock('../../store/useAuthStore', () => ({
-  __esModule: true, // This is needed when mocking modules that use ES module exports
+  __esModule: true,
   default: jest.fn(() => ({
     profile: {
       dailyGoal: 120,

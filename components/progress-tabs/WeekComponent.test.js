@@ -1,8 +1,9 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import WeekComponent from './WeekComponent' // Adjust the import path as needed
-import 'react-native-gifted-charts' // Import the module to mock
+import WeekComponent from './WeekComponent'
+import 'react-native-gifted-charts'
 
+// Mock the external hooks and modules
 jest.mock('react-native-gifted-charts', () => ({
   PieChart: () => 'PieChart',
   BarChart: () => 'BarChart',

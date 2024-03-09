@@ -33,6 +33,7 @@ const JournalDetailScreen = ({ route }) => {
   const navigation = useNavigation()
 
   const editJournal = () => {
+    // Navigate to the JournalEntry screen for editing the journal entry
     navigation.navigate('JournalEntry', {
       id,
       imageUrl,
@@ -43,7 +44,7 @@ const JournalDetailScreen = ({ route }) => {
   }
 
   const handleDeleteJournal = async () => {
-    // show alert before deleting
+    // Show an alert before deleting the journal
     Alert.alert(
       'Delete Journal',
       'Are you sure you want to delete this journal?',
@@ -55,6 +56,7 @@ const JournalDetailScreen = ({ route }) => {
         {
           text: 'OK',
           onPress: async () => {
+            // Delete the journal entry and navigate back to the Journal screen
             await deleteJournal(user.uid, id)
             navigation.navigate('Journal')
           },
@@ -71,7 +73,9 @@ const JournalDetailScreen = ({ route }) => {
           backgroundColor={theme.colors.primary}
         />
         <View style={[GlobalStyles.container, styles.container]}>
+          {/* Header */}
           <Header showBack={true} useLogo={false} title='Journal Details' />
+          {/* Journal details */}
           <View style={styles.journalContainer}>
             <Image
               source={{ uri: imageUrl || 'https://placehold.it/300x300' }}
@@ -86,7 +90,7 @@ const JournalDetailScreen = ({ route }) => {
             </CText>
             <CText style={styles.description}>{description}</CText>
           </View>
-
+          {/* Action buttons */}
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
               style={[GlobalStyles.button]}
@@ -95,6 +99,7 @@ const JournalDetailScreen = ({ route }) => {
             >
               <CText style={[GlobalStyles.buttonText]}>Edit Journal</CText>
             </TouchableOpacity>
+            {/* Delete journal button */}
             <TouchableOpacity
               style={[GlobalStyles.button, styles.deleteButton]}
               onPress={handleDeleteJournal}

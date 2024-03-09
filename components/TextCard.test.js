@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
-import TextCard from './TextCard' // Adjust the import path as necessary
+import TextCard from './TextCard'
 
 describe('TextCard', () => {
   const mockOnButtonPress = jest.fn()

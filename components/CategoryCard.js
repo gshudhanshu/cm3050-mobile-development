@@ -18,6 +18,7 @@ const CategoryCard = ({ onPress, imageUrl, category, numberOfSessions }) => {
       onPress={onPress}
       testID='category-card-touchable'
     >
+      {/* Background image for the category card */}
       <ImageBackground
         source={{
           uri: imageUrl,
@@ -26,12 +27,14 @@ const CategoryCard = ({ onPress, imageUrl, category, numberOfSessions }) => {
         style={styles.backgroundImage}
         testID='image-background'
       >
+        {/* Overlay for the category card */}
         <View style={styles.overlay}>
           <BlurView
             intensity={50}
             style={styles.infoBlur}
             experimentalBlurMethod={'dimezisBlurView'}
           >
+            {/* Category title */}
             <CText
               style={styles.titleText}
               weight={'semiBold'}
@@ -39,6 +42,7 @@ const CategoryCard = ({ onPress, imageUrl, category, numberOfSessions }) => {
             >
               {category}
             </CText>
+            {/* Number of sessions in the category */}
             <CText style={styles.sessionText}>
               {numberOfSessions} sessions
             </CText>

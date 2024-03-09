@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
-import CategoryScreen from './CategoryScreen' // Adjust the import path as needed
+import CategoryScreen from './CategoryScreen'
 import { NavigationContainer } from '@react-navigation/native'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import useSessionStore from '../store/useSessionStore'
@@ -24,7 +24,6 @@ const renderCategoryScreen = (routeParams) => {
 
 describe('CategoryScreen', () => {
   beforeEach(() => {
-    // Reset all mocks before each test
     useNavigation.mockReturnValue({ navigate: jest.fn() })
     useIsFocused.mockReturnValue(true)
     useSessionStore.mockReturnValue({

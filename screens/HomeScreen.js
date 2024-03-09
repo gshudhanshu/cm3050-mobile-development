@@ -81,6 +81,7 @@ export default function HomeScreen() {
           backgroundColor={theme.colors.primary}
         />
         <View style={[GlobalStyles.container, styles.container]}>
+          {/* Header */}
           <Header
             showBack={false}
             useLogo={true}
@@ -126,6 +127,7 @@ export default function HomeScreen() {
               <CText style={[GlobalStyles.buttonText]}>View</CText>
             </TouchableOpacity>
           </View>
+          {/* Modal for Quote */}
           <Modal
             animationType='slide'
             transparent={true}

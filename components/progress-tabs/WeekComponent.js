@@ -17,7 +17,7 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 
 export default function WeekComponent() {
-  const { progress, percentageDifferences } = useSessionStore() // Access progress data from the store
+  const { progress, percentageDifferences } = useSessionStore()
   const { averageMoodLast7Days, averageMoodLast30Days } = useWellnessStore()
 
   // Use useMemo to transform progress data only when it changes
@@ -47,6 +47,8 @@ export default function WeekComponent() {
 
   return (
     <View style={styles.container}>
+      {/* Bar chart displaying weekly progress */}
+
       <BarChart
         barWidth={15}
         noOfSections={3}
@@ -58,11 +60,10 @@ export default function WeekComponent() {
         yAxisTextStyle={{ color: theme.colors.grayMedium }}
       />
 
-      {/* Add your components for daily completed sessions and editable daily goal here */}
       <View style={[styles.tabContainer]}>
-        {/* Trending sessions */}
         <View style={styles.sessionsContainer}>
           <View style={[GlobalStyles.blockContainer, styles.blockContainer]}>
+            {/* Display average percentage increase in completed sessions */}
             <CText
               weight='semiBold'
               style={[GlobalStyles.blockTitle, styles.blockText]}
@@ -73,6 +74,7 @@ export default function WeekComponent() {
               On average, you completed {percentageDifferences.last7Days}% more
               sessions this week
             </CText>
+            {/* Display average mood for the last 7 days */}
             <CText
               weight='semiBold'
               style={[GlobalStyles.blockTitle, styles.blockText]}

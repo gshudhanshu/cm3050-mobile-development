@@ -93,11 +93,13 @@ const JournalEntryScreen = ({ route }) => {
           backgroundColor={theme.colors.primary}
         />
         <View style={[GlobalStyles.container, styles.container]}>
+          {/* Header */}
           <Header
             showBack={true}
             useLogo={false}
             title={id ? 'Edit Journal' : 'Journal Entry'}
           />
+          {/* Formik form */}
           <Formik
             initialValues={initialValues}
             validationSchema={JournalEntrySchema}
@@ -127,6 +129,7 @@ const JournalEntryScreen = ({ route }) => {
                     style={styles.image}
                   />
                 </TouchableOpacity>
+                {/* Title input */}
                 <TextInput
                   style={GlobalStyles.input}
                   onChangeText={handleChange('title')}
@@ -137,6 +140,7 @@ const JournalEntryScreen = ({ route }) => {
                 {touched.title && errors.title && (
                   <Text style={GlobalStyles.errorText}>{errors.title}</Text>
                 )}
+                {/* Description input */}
                 <TextInput
                   style={[GlobalStyles.input, styles.descriptionInput]}
                   onChangeText={handleChange('description')}
@@ -150,6 +154,7 @@ const JournalEntryScreen = ({ route }) => {
                     {errors.description}
                   </Text>
                 )}
+                {/* Date input */}
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                   <TextInput
                     style={GlobalStyles.input}
@@ -157,6 +162,7 @@ const JournalEntryScreen = ({ route }) => {
                     placeholder='Date'
                     editable={false} // Makes the text input non-editable
                   />
+                  {/* Date picker */}
                 </TouchableOpacity>
                 {showDatePicker && (
                   <DateTimePicker
@@ -169,6 +175,7 @@ const JournalEntryScreen = ({ route }) => {
                     }}
                   />
                 )}
+                {/* Submit button */}
                 <TouchableOpacity
                   onPress={handleSubmit}
                   style={GlobalStyles.button}
@@ -202,8 +209,8 @@ const styles = StyleSheet.create({
     marginVertical: RFValue(20),
   },
   descriptionInput: {
-    height: RFValue(120), // Adjust the height for the description input
-    textAlignVertical: 'top', // Align text to the top for multiline TextInput
+    height: RFValue(120),
+    textAlignVertical: 'top',
   },
 })
 

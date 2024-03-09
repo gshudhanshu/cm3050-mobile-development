@@ -26,6 +26,7 @@ import FacebookIcon from '../assets/facebook-icon'
 import GoogleIcon from '../assets/google-icon'
 import { RFValue } from 'react-native-responsive-fontsize'
 
+// Schema for form validation using Yup
 const signupSchema = yup.object().shape({
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),

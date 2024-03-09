@@ -5,6 +5,7 @@ import PlayerScreen from './PlayerScreen'
 import { Audio } from 'expo-av'
 import * as Speech from 'expo-speech'
 
+// Mock dependencies
 jest.mock('expo-av', () => ({
   Audio: {
     Sound: {
@@ -99,7 +100,6 @@ describe('PlayerScreen', () => {
       expect.any(Function)
     )
 
-    // Assume your component renders session title
     const titleElement = await findByText(mockRoute.params.session.title)
     expect(titleElement).toBeTruthy()
   })

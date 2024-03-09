@@ -23,44 +23,44 @@ import { useNavigation } from '@react-navigation/native'
 
 import useSessionStore from '../store/useSessionStore'
 
-const categoriesData = [
-  {
-    id: '1',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Meditation',
-    numberOfSessions: 25,
-  },
-  {
-    id: '2',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
-  },
-  {
-    id: '3',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
-  },
-  {
-    id: '4',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
-  },
-  {
-    id: '5',
-    imageUrl:
-      'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-    category: 'Yoga',
-    numberOfSessions: 15,
-  },
-  // Add more categories as needed
-]
+// Sample data for categories (to be replaced with API call)
+// const categoriesData = [
+//   {
+//     id: '1',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     category: 'Meditation',
+//     numberOfSessions: 25,
+//   },
+//   {
+//     id: '2',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     category: 'Yoga',
+//     numberOfSessions: 15,
+//   },
+//   {
+//     id: '3',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     category: 'Yoga',
+//     numberOfSessions: 15,
+//   },
+//   {
+//     id: '4',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     category: 'Yoga',
+//     numberOfSessions: 15,
+//   },
+//   {
+//     id: '5',
+//     imageUrl:
+//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
+//     category: 'Yoga',
+//     numberOfSessions: 15,
+//   },
+// ]
 
 export default function SearchScreen() {
   const { fetchCategories, categories } = useSessionStore()
@@ -68,14 +68,17 @@ export default function SearchScreen() {
   const navigation = useNavigation()
   const [searchQuery, setSearchQuery] = useState('')
 
+  // Fetch categories on screen focus
   useEffect(() => {
     fetchCategories()
   }, [isFocused])
 
+  // Filter categories based on search query
   const filteredCategories = categories.filter((category) =>
     category.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  // Render each category card
   const renderCategoryCard = (item, index) => (
     <View
       key={item.id}

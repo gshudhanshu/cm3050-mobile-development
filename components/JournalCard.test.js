@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
-import JournalCard from './JournalCard' // Adjust the import path as necessary
+import JournalCard from './JournalCard'
 
 describe('JournalCard', () => {
   const props = {

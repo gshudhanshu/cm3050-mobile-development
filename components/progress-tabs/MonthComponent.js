@@ -37,7 +37,8 @@ export default function MonthComponent() {
     progress.forEach((session) => {
       const sessionDate = dayjs(session.date).format('YYYY-MM-DD')
       if (dateLabels.hasOwnProperty(sessionDate)) {
-        aggregatedData[dateLabels[sessionDate]].value += session.duration / 60 // Sum durations for the day
+        // Sum durations for the day
+        aggregatedData[dateLabels[sessionDate]].value += session.duration / 60
       }
     })
 
@@ -46,6 +47,7 @@ export default function MonthComponent() {
 
   return (
     <View style={styles.container}>
+      {/* Bar chart displaying monthly progress */}
       <BarChart
         barWidth={RFValue(12)}
         noOfSections={3}
@@ -59,11 +61,12 @@ export default function MonthComponent() {
         yAxisTextStyle={{ color: theme.colors.grayMedium }}
       />
 
-      {/* Add your components for daily completed sessions and editable daily goal here */}
+      {/* Additional components for monthly progress */}
       <View style={[styles.tabContainer]}>
         {/* Trending sessions */}
         <View style={styles.sessionsContainer}>
           <View style={[GlobalStyles.blockContainer, styles.blockContainer]}>
+            {/* Display average percentage increase in completed sessions */}
             <CText
               weight='semiBold'
               style={[GlobalStyles.blockTitle, styles.blockText]}
@@ -74,6 +77,7 @@ export default function MonthComponent() {
               On average, you completed {percentageDifferences.last30Days}% more
               sessions this month
             </CText>
+            {/* Display average mood for the last 30 days */}
             <CText
               weight='semiBold'
               style={[GlobalStyles.blockTitle, styles.blockText]}
@@ -81,7 +85,7 @@ export default function MonthComponent() {
               Monthly mood
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
-              On average, your mood was {averageMoodLast30Days}
+              On average, your mood was {averageMoodLast30Days} with scale 1-6
             </CText>
           </View>
         </View>

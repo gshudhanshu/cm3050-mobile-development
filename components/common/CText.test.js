@@ -19,9 +19,6 @@ describe('CText', () => {
     (weight, expectedFontFamily) => {
       const { getByText } = render(<CText weight={weight}>Test Text</CText>)
       const textComponent = getByText('Test Text')
-      // React Native Testing Library does not directly allow you to inspect styles,
-      // so we're assuming correct functionality based on correct rendering here.
-      // For more detailed style testing, consider snapshot testing or integration testing.
       expect(textComponent).toBeTruthy()
     }
   )
@@ -30,7 +27,6 @@ describe('CText', () => {
     const customStyle = { color: 'blue' }
     const { getByText } = render(<CText style={customStyle}>Test Text</CText>)
     const textComponent = getByText('Test Text')
-    // As above, direct style inspection isn't supported here, so we're ensuring rendering.
     expect(textComponent).toBeTruthy()
   })
 })

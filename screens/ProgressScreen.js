@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
 
 import { RFValue } from 'react-native-responsive-fontsize'
-import CText from '../components//common/CText'
+import CText from '../components/common/CText'
 import Header from '../components/Header'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
@@ -46,6 +46,7 @@ export default function ProgressScreen() {
   const [tabViewHeight, setTabViewHeight] = useState(RFValue(650))
 
   useEffect(() => {
+    // Adjust tab view height based on the selected tab index
     switch (index) {
       case 0:
         setTabViewHeight(RFValue(650))
@@ -62,12 +63,14 @@ export default function ProgressScreen() {
   }, [index])
 
   useEffect(() => {
+    // Fetch user progress data when user profile and authentication are available
     if (user !== null && profile !== null) {
       fetchProgressLast65DaysAndCalculateAverages(user.uid, profile.dailyGoal)
       fetchMoodAverages(user.uid)
     }
   }, [user, profile, isFocused])
 
+  // Render loading view while user profile is being fetched
   if (profile === null) {
     return <Loading testID='loading-view' />
   }
@@ -82,8 +85,7 @@ export default function ProgressScreen() {
           />
           <Header showBack={false} useLogo={false} title={'Progress'} />
           <View style={styles.progressContainer}>
-            {/* profile picture */}
-            {/* name and email */}
+            {/* Render user profile details */}
             <View
               style={styles.profileDetailsContainer}
               testID='profile-details-container'
@@ -100,7 +102,7 @@ export default function ProgressScreen() {
                   {profile.email}
                 </CText>
               </View>
-              {/* streak, sessions, min in three columns with a line between them */}
+              {/* Render user statistics */}
               <View style={styles.statsContainer}>
                 <View style={styles.statsColumn}>
                   <CText weight='regular' style={styles.statsValue}>
@@ -127,7 +129,7 @@ export default function ProgressScreen() {
                   </CText>
                 </View>
               </View>
-              {/* tabs day, week, month */}
+              {/* Render tab view for daily, weekly, and monthly progress */}
               <View style={styles.tabContainer}>
                 <TabView
                   navigationState={{ index, routes }}

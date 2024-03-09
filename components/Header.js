@@ -15,6 +15,7 @@ const Header = ({ showBack, title, useLogo }) => {
   const navigation = useNavigation()
   const { user, setUserProfile, profile } = useAuthStore()
 
+  // Fetch user profile data when user ID changes
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (user?.uid) {
@@ -34,6 +35,7 @@ const Header = ({ showBack, title, useLogo }) => {
 
   return (
     <View style={styles.headerContainer}>
+      {/* Back button if showBack is true */}
       <View style={styles.iconButton}>
         {showBack && (
           <TouchableOpacity
@@ -51,12 +53,13 @@ const Header = ({ showBack, title, useLogo }) => {
           </TouchableOpacity>
         )}
       </View>
+      {/* Display logo or screen title */}
       {useLogo ? (
         <Logo style={GlobalStyles.logo} testID='logo' />
       ) : (
         <CText style={styles.screenTitle}>{title}</CText>
       )}
-
+      {/* Profile avatar */}
       <TouchableOpacity
         onPress={() => navigation.navigate('Profile')}
         style={styles.iconButton}

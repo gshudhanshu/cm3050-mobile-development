@@ -11,9 +11,11 @@ const JournalCard = ({ imageUri, date, title, description, onButtonPress }) => {
       onPress={onButtonPress}
       testID='journal-card-button'
     >
+      {/* Image container */}
       <View style={styles.imageContainer}>
         <Image source={{ uri: imageUri }} style={styles.image} />
       </View>
+      {/* Content container */}
       <View style={styles.contentContainer}>
         <CText weight='semiBold' style={styles.date}>
           {date}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react-native'
-import SearchScreen from './SearchScreen' // Adjust the import path as necessary
+import SearchScreen from './SearchScreen'
 import useSessionStore from '../store/useSessionStore'
 import { useNavigation } from '@react-navigation/native'
 
@@ -70,7 +70,7 @@ describe('SearchScreen Tests', () => {
 
     const { getByText } = render(<SearchScreen />)
 
-    const categoryCard = getByText('Meditation') // Use the category title or a testID
+    const categoryCard = getByText('Meditation')
     fireEvent.press(categoryCard)
 
     expect(mockNavigate).toHaveBeenCalledWith('Category', {

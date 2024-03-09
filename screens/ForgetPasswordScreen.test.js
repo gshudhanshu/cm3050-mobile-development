@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import ForgetPasswordScreen from './ForgetPasswordScreen' // Adjust the import path as needed
+import ForgetPasswordScreen from './ForgetPasswordScreen'
 
 describe('ForgetPasswordScreen', () => {
   it('renders the expected text', () => {

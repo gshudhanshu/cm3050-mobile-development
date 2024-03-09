@@ -1,12 +1,13 @@
 // JournalDetailScreen.test.js
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react-native'
-import JournalDetailScreen from './JournalDetailScreen' // Adjust the import path as needed
+import JournalDetailScreen from './JournalDetailScreen'
 import * as useJournalStoreModule from '../store/useJournalStore'
 import * as useAuthStoreModule from '../store/useAuthStore'
 import { Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
+// Mock useNavigation to control its behavior in tests
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     navigate: jest.fn(),
@@ -30,7 +31,8 @@ describe('JournalDetailScreen', () => {
   const user = { uid: 'test-uid' }
 
   beforeEach(() => {
-    jest.clearAllMocks() // Clear mock call history before each test
+    // Clear mock call history before each test
+    jest.clearAllMocks()
 
     // Mock stores with functions and initial data
     jest.spyOn(useJournalStoreModule, 'default').mockImplementation(() => ({
@@ -46,7 +48,7 @@ describe('JournalDetailScreen', () => {
       <JournalDetailScreen route={route} />
     )
     expect(getByText(route.params.title)).toBeTruthy()
-    expect(getByText('Test Description')).toBeTruthy() // Update this with a check that fits your component structure
+    expect(getByText('Test Description')).toBeTruthy()
     expect(getByTestId('journal-image').props.source.uri).toBe(
       route.params.imageUrl
     )

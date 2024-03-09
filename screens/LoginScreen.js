@@ -24,6 +24,7 @@ import GoogleIcon from '../assets/google-icon'
 import { RFValue } from 'react-native-responsive-fontsize'
 import { ScrollView } from 'react-native-gesture-handler'
 
+// Validation schema for login form using Yup
 const loginSchema = yup.object().shape({
   email: yup
     .string()
@@ -39,6 +40,7 @@ const LoginScreen = () => {
   const navigation = useNavigation()
 
   useEffect(() => {
+    // Redirect to Home screen if user is already logged in
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         navigation.navigate('Home')
@@ -47,6 +49,7 @@ const LoginScreen = () => {
     return unsubscribe
   }, [])
 
+  // Function to handle login
   const handleLogin = (values) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
@@ -62,18 +65,18 @@ const LoginScreen = () => {
       })
   }
 
-  const handleGoogleLogin = () => {
-    // Add your Google login logic here
-  }
+  // Function to handle Google login
+  const handleGoogleLogin = () => {}
 
-  const handleFacebookLogin = () => {
-    // Add your Facebook login logic here
-  }
+  // Function to handle Facebook login
+  const handleFacebookLogin = () => {}
 
+  // Function to navigate to forget password screen
   const handleForgetPassword = () => {
     navigation.navigate('ForgetPassword')
   }
 
+  // Function to navigate to sign up screen
   const handleSignUp = () => {
     navigation.navigate('Signup')
   }
@@ -83,8 +86,10 @@ const LoginScreen = () => {
       <KeyboardAvoidingView style={[GlobalStyles.container]}>
         <ScrollView style={styles.container}>
           <View>
+            {/* Title */}
             <CText style={GlobalStyles.title}>Login Your Account</CText>
           </View>
+          {/* Social login buttons */}
           <View style={styles.buttons}>
             <Pressable
               onPress={handleGoogleLogin}
@@ -109,7 +114,9 @@ const LoginScreen = () => {
               </CText>
             </Pressable>
           </View>
+          {/* Or login with email */}
           <CText style={styles.orText}>Or Login with email</CText>
+          {/* Formik form for email and password */}
           <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={loginSchema}

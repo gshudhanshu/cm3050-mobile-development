@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
-import LoginScreen from './LoginScreen' // Adjust the import path as needed
+import LoginScreen from './LoginScreen'
 import * as yup from 'yup'
 
 // Mock dependencies

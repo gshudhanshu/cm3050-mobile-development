@@ -34,10 +34,10 @@ import {
 } from '../utils/utils'
 import useAuthStore from '../store/useAuthStore'
 
-import { auth } from '../firebase/firebase' // Adjust import paths as necessary
+import { auth } from '../firebase/firebase'
 import GlobalStyles from '../utils/GlobalStyles'
 import theme from '../utils/theme'
-import BackIcon from '../assets/back-icon' // Ensure you have a BackIcon component or image
+import BackIcon from '../assets/back-icon'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Header from '../components/Header'
 
@@ -61,6 +61,7 @@ const ProfileScreen = () => {
   })
   const [showDatePicker, setShowDatePicker] = useState(false)
 
+  // Fetch user profile data
   const fetchUserProfile = async () => {
     const userId = auth.currentUser.uid
     const profile = await getUserProfile(userId)
@@ -71,6 +72,7 @@ const ProfileScreen = () => {
     console.log(profile.dob)
     console.log(formattedDob)
     if (profile) {
+      // Set initial form values with fetched user profile data
       setInitialValues({
         ...initialValues,
         ...profile,
@@ -80,10 +82,12 @@ const ProfileScreen = () => {
   }
 
   useEffect(() => {
+    // Fetch user profile data when component mounts
     fetchUserProfile()
   }, [])
 
   const pickImage = async (setFieldValue) => {
+    // Allow user to pick an image from gallery
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -92,6 +96,7 @@ const ProfileScreen = () => {
     })
 
     if (!result.cancelled) {
+      // Upload selected image and set profile picture field value
       const imageUrl = await uploadProfilePicture(
         auth.currentUser.uid,
         result.assets[0].uri
@@ -102,7 +107,7 @@ const ProfileScreen = () => {
 
   const submitForm = async (values) => {
     try {
-      console.log('values:', values)
+      // Submit form data and update user profile
       const userId = auth.currentUser.uid
       const formattedDob = dayjs(values.dob).format('DD/MM/YYYY')
       await saveUserProfile(userId, { ...values, dob: formattedDob })
@@ -122,6 +127,7 @@ const ProfileScreen = () => {
           backgroundColor={theme.colors.primary}
         />
         <View style={[GlobalStyles.container, styles.container]}>
+          {/* Header component */}
           <Header
             showBack={true}
             useLogo={true}
@@ -159,7 +165,7 @@ const ProfileScreen = () => {
                         style={styles.image}
                       />
                     </TouchableOpacity>
-
+                    {/* First name input */}
                     <TextInput
                       style={GlobalStyles.input}
                       onChangeText={handleChange('firstName')}
@@ -173,6 +179,7 @@ const ProfileScreen = () => {
                         {errors.firstName}
                       </Text>
                     )}
+                    {/* Last name input */}
                     <TextInput
                       style={GlobalStyles.input}
                       onChangeText={handleChange('lastName')}
@@ -186,15 +193,17 @@ const ProfileScreen = () => {
                         {errors.lastName}
                       </Text>
                     )}
+                    {/* Date of Birth input */}
                     <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                       <TextInput
                         style={GlobalStyles.input}
                         value={values.dob ? values.dob.toDateString() : ''}
                         placeholder='Date of Birth'
-                        editable={false} // Makes the text input non-editable
+                        editable={false}
                         testID='date-picker'
                       />
                     </TouchableOpacity>
+
                     {showDatePicker && (
                       <DateTimePicker
                         value={values.dob || new Date()}
@@ -206,7 +215,7 @@ const ProfileScreen = () => {
                         }}
                       />
                     )}
-
+                    {/* Gender picker */}
                     <Picker
                       selectedValue={values.gender}
                       onValueChange={(itemValue, itemIndex) =>
@@ -217,8 +226,8 @@ const ProfileScreen = () => {
                     >
                       <Picker.Item label='Male' value='male' />
                       <Picker.Item label='Female' value='female' />
-                      {/* Add more genders as needed */}
                     </Picker>
+                    {/* Submit button */}
                     <TouchableOpacity
                       onPress={handleSubmit}
                       style={GlobalStyles.button}

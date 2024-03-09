@@ -58,13 +58,16 @@ export default function PlayerScreen({ route }) {
   const isFocused = useIsFocused()
 
   useEffect(() => {
+    // Load audio when the screen is focused
     if (isFocused) {
       loadAudio()
     } else {
+      // Unload audio when the screen is unfocused
       unloadAudio()
       spokenInstructionsRef.current = new Set()
     }
     return () => {
+      // Cleanup when the component unmounts
       unloadAudio()
       spokenInstructionsRef.current = new Set()
     }
@@ -74,6 +77,8 @@ export default function PlayerScreen({ route }) {
     if (sound) {
       await unloadAudio()
     }
+
+    // Load audio from the session's audio URL
     const { sound: newSound } = await Audio.Sound.createAsync(
       { uri: session.audioUrl },
       { shouldPlay: false },
@@ -85,6 +90,7 @@ export default function PlayerScreen({ route }) {
 
   const unloadAudio = async () => {
     if (sound) {
+      // Unload the current audio
       await sound.unloadAsync()
       setSound(null)
       setIsLoading(true)
@@ -92,14 +98,16 @@ export default function PlayerScreen({ route }) {
   }
 
   const handleAudioPlaybackStatusUpdate = async (status) => {
+    // Update playback status
     setPlaybackStatus(status)
     setIsPlaying(status.isPlaying)
     if (status.isPlaying) {
+      // Check and speak instructions when audio is playing
       checkAndSpeakInstructions(status.positionMillis)
     }
 
     if (status.didJustFinish) {
-      // Assuming session includes necessary data like date and duration
+      // If audio playback just finished, mark session as completed
       const sessionData = {
         date: dayjs(),
         duration: status.durationMillis / 1000,
@@ -107,9 +115,7 @@ export default function PlayerScreen({ route }) {
         sessionId: session.id,
       }
 
-      // Add the finished session to the user's progress
       await addFinishedSession(user.uid, sessionData)
-      // Update user state with the new user data
       await getUserProfile(user.uid)
       console.log('Profile', useAuthStore.getState().profile)
     }
@@ -117,11 +123,14 @@ export default function PlayerScreen({ route }) {
 
   const playPauseAudio = async () => {
     if (!sound) {
+      // Show an alert if audio is not loaded
       Alert.alert('Error', 'Audio not loaded, wait few seconds and try again.')
     }
     if (playbackStatus.isPlaying) {
+      // Pause audio if currently playing
       await sound.pauseAsync()
     } else {
+      // Start playing audio if paused or stopped
       if (playbackStatus.didJustFinish || playbackStatus.positionMillis === 0) {
         spokenInstructionsRef.current.clear()
         await sound.setPositionAsync(0)
@@ -131,6 +140,7 @@ export default function PlayerScreen({ route }) {
   }
 
   const seekAudio = async (value) => {
+    // Seek audio to the specified position
     const newPositionMillis = value * playbackStatus.durationMillis
     await sound.setPositionAsync(newPositionMillis)
     spokenInstructionsRef.current = new Set(
@@ -141,6 +151,7 @@ export default function PlayerScreen({ route }) {
   }
 
   const formatTime = (milliseconds) => {
+    // Format milliseconds into minutes:seconds
     const totalSeconds = milliseconds / 1000
     const minutes = Math.floor(totalSeconds / 60)
     const seconds = Math.floor(totalSeconds % 60)
@@ -148,15 +159,15 @@ export default function PlayerScreen({ route }) {
   }
 
   const checkAndSpeakInstructions = (positionMillis) => {
+    // Check if it's time to speak instructions and if they haven't been spoken yet
     const currentTimeInSeconds = positionMillis / 1000
     session.instructions.forEach((instruction) => {
-      // Check if the current time has passed the instruction time and if it hasn't been spoken yet
       if (
         currentTimeInSeconds >= instruction.time &&
         !spokenInstructionsRef.current.has(instruction.time)
       ) {
         if (!isMuted) {
-          console.log('Speaking instruction:', instruction.text)
+          // Speak instruction if not muted
           Speech.speak(instruction.text, {
             rate: 0.75,
             pitch: 1.0,
@@ -171,6 +182,7 @@ export default function PlayerScreen({ route }) {
   }
 
   if (isLoading) {
+    // Show loading screen while audio is loading
     return <Loading />
   }
 
@@ -183,10 +195,12 @@ export default function PlayerScreen({ route }) {
         />
         <View style={[GlobalStyles.container, styles.container]}>
           <Header showBack={true} useLogo={false} title={'Player'} />
+          {/* Display session thumbnail */}
           <Image
             source={{ uri: session.thumbnailUrl }}
             style={styles.thumbnail}
           />
+          {/* Display session information */}
           <View style={styles.sessionInfoContainer}>
             <CText style={styles.artist}>{session.artist || 'unknown'}</CText>
             <CText weight='semiBold' style={styles.title}>
@@ -194,7 +208,7 @@ export default function PlayerScreen({ route }) {
             </CText>
           </View>
 
-          {/* Add artist or description if needed */}
+          {/* Slider for audio playback progress */}
           <Slider
             style={styles.progressBar}
             minimumValue={0}
@@ -206,6 +220,7 @@ export default function PlayerScreen({ route }) {
             minimumTrackTintColor='#FFFFFF'
             maximumTrackTintColor='#000000'
           />
+          {/* Display current and total time of audio */}
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>
               {formatTime(playbackStatus.positionMillis || 0)}
@@ -214,6 +229,7 @@ export default function PlayerScreen({ route }) {
               {formatTime(playbackStatus.durationMillis || 0)}
             </Text>
           </View>
+          {/* Audio playback controls */}
           <View style={styles.controls}>
             <TouchableOpacity
               onPress={() =>
@@ -237,6 +253,7 @@ export default function PlayerScreen({ route }) {
               <ForwardIcon width={48} height={48} fill={theme.colors.white} />
             </TouchableOpacity>
           </View>
+          {/* Display current spoken instruction */}
           <View style={styles.instructionsContainer}>
             <Text style={styles.instructionsText}>{currentInstruction}</Text>
             <TouchableOpacity

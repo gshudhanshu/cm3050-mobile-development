@@ -14,13 +14,16 @@ export default function TextCard({
   return (
     <View style={styles.cardContainer}>
       <View style={styles.cardSubContainer}>
+        {/* Title of the card */}
         <CText weight='light' style={styles.cardTitle}>
           {title}
         </CText>
+        {/* Subtitle of the card */}
         <CText numberOfLines={1} weight='semiBold' style={styles.cardSubTitle}>
           {subTitle}
         </CText>
       </View>
+      {/* Button for the card */}
       {buttonTitle && (
         <TouchableOpacity
           style={[GlobalStyles.button, styles.viewButton]}

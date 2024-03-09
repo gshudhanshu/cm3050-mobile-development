@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
-import Header from './Header' // Adjust the import path as necessary
+import Header from './Header'
 import * as useAuthStore from '../store/useAuthStore'
 import * as useNavigation from '@react-navigation/native'
 
@@ -36,7 +36,7 @@ describe('Header Component', () => {
   it('renders correctly with a title and no back button', () => {
     const { getByText, queryByTestId } = render(<Header title='Test Title' />)
     expect(getByText('Test Title')).toBeTruthy()
-    expect(queryByTestId('back-button')).toBeNull() // Assuming you add testIDs to your components
+    expect(queryByTestId('back-button')).toBeNull()
   })
 
   it('navigates back when back button is pressed', () => {

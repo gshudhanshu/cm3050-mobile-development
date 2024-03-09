@@ -41,33 +41,6 @@ import useSessionStore from '../store/useSessionStore'
 //     duration: 25,
 //     title: 'Meditation',
 //   },
-//   {
-//     id: '3',
-//     imageUrl:
-//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-//     level: 'Beginner',
-//     type: 'Guided',
-//     duration: 25,
-//     title: 'Meditation',
-//   },
-//   {
-//     id: '4',
-//     imageUrl:
-//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-//     level: 'Beginner',
-//     type: 'Guided',
-//     duration: 25,
-//     title: 'Meditation',
-//   },
-//   {
-//     id: '5',
-//     imageUrl:
-//       'https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=',
-//     level: 'Beginner',
-//     type: 'Guided',
-//     duration: 25,
-//     title: 'Meditation',
-//   },
 // ]
 
 export default function CategoryScreen({ route }) {
@@ -77,14 +50,17 @@ export default function CategoryScreen({ route }) {
   const isFocused = useIsFocused()
   const navigation = useNavigation()
 
+  // Fetch sessions when the screen is focused or the category changes
   useEffect(() => {
     fetchSessions(category)
   }, [isFocused, category])
 
+  // Filter sessions based on the search query
   const filteredSessions = sessions.filter((session) =>
     session.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  // Render each session card
   const renderCategoryCard = (item, index) => (
     <View
       key={item.id}
@@ -113,6 +89,7 @@ export default function CategoryScreen({ route }) {
             barStyle='light-content'
             backgroundColor={theme.colors.primary}
           />
+          {/* Header */}
           <Header showBack={true} useLogo={false} title={'Search'} />
           {/* Search input */}
           <View style={styles.searchInputContainer}>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
-import SessionCard from './SessionCard' // Adjust the import path as necessary
+import SessionCard from './SessionCard'
 
 describe('SessionCard', () => {
   const mockOnPress = jest.fn()

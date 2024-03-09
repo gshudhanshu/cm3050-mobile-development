@@ -35,12 +35,14 @@ export default function JournalScreen() {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
+    // Fetch journals when user changes
     if (user?.uid) {
       fetchJournals(user.uid)
     }
   }, [user?.uid, fetchJournals])
 
   const addNewJournal = () => {
+    // Navigate to Journal Entry screen
     navigation.navigate('JournalEntry')
   }
 
@@ -59,6 +61,7 @@ export default function JournalScreen() {
             barStyle='light-content'
             backgroundColor={theme.colors.primary}
           />
+          {/* Header */}
           <Header showBack={false} useLogo={false} title={'Journal'} />
           {/* Search input */}
           <View style={styles.searchInputContainer}>
@@ -75,6 +78,7 @@ export default function JournalScreen() {
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
                 Browse by Journals
               </CText>
+              {/* Add Journal button */}
               <TouchableOpacity
                 style={[GlobalStyles.button]}
                 onPress={addNewJournal}
@@ -82,6 +86,7 @@ export default function JournalScreen() {
                 <CText style={[GlobalStyles.buttonText]}>Add Journal</CText>
               </TouchableOpacity>
             </View>
+            {/* Render each journal card */}
             <View style={styles.journalsContainer}>
               {filteredJournals.map((journal) => (
                 <JournalCard

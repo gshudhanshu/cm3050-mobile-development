@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
-import ProfileScreen from './ProfileScreen' // Adjust the import path as needed
+import ProfileScreen from './ProfileScreen'
 import * as ImagePicker from 'expo-image-picker'
 import { useNavigation } from '@react-navigation/native'
 import {
@@ -26,11 +26,11 @@ jest.mock('../firebase/firebase', () => ({
   },
 }))
 
-// Example tests
 describe('ProfileScreen', () => {
   const mockNavigation = { navigate: jest.fn() }
   useNavigation.mockReturnValue(mockNavigation)
 
+  // Mock the user store
   beforeEach(() => {
     getUserProfile.mockResolvedValue({
       firstName: 'John',
@@ -72,7 +72,6 @@ describe('ProfileScreen', () => {
 
   it('displays gender picker and handles selection', () => {
     const { getByTestId } = render(<ProfileScreen />)
-    // check if the item is mounted
     expect(getByTestId('gender-picker')).toBeTruthy()
   })
 })
