@@ -76,6 +76,7 @@ const JournalDetailScreen = ({ route }) => {
             <Image
               source={{ uri: imageUrl || 'https://placehold.it/300x300' }}
               style={styles.image}
+              testID='journal-image'
             />
             <CText weight='semiBold' style={styles.title}>
               {title}
@@ -90,12 +91,14 @@ const JournalDetailScreen = ({ route }) => {
             <TouchableOpacity
               style={[GlobalStyles.button]}
               onPress={editJournal}
+              testID='edit-journal-button'
             >
               <CText style={[GlobalStyles.buttonText]}>Edit Journal</CText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[GlobalStyles.button, styles.deleteButton]}
               onPress={handleDeleteJournal}
+              testID='delete-journal-button'
             >
               <CText style={[GlobalStyles.buttonText]}>Delete Journal</CText>
             </TouchableOpacity>

@@ -69,7 +69,7 @@ export default function ProgressScreen() {
   }, [user, profile, isFocused])
 
   if (profile === null) {
-    return <Loading />
+    return <Loading testID='loading-view' />
   }
 
   return (
@@ -84,7 +84,10 @@ export default function ProgressScreen() {
           <View style={styles.progressContainer}>
             {/* profile picture */}
             {/* name and email */}
-            <View style={styles.profileDetailsContainer}>
+            <View
+              style={styles.profileDetailsContainer}
+              testID='profile-details-container'
+            >
               <Image
                 source={{ uri: profile?.profilePicture || '' }}
                 style={styles.profilePicture}
