@@ -1,6 +1,6 @@
 // PlayerScreen.test.js
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react-native'
+import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import PlayerScreen from './PlayerScreen'
 import { Audio } from 'expo-av'
 import * as Speech from 'expo-speech'
@@ -61,9 +61,28 @@ const mockRoute = {
 }
 
 describe('PlayerScreen', () => {
+  const mockUnloadAsync = jest.fn()
+  const mockPlayAsync = jest.fn()
+  const mockPauseAsync = jest.fn()
+  const mockSetPositionAsync = jest.fn()
+
   beforeEach(() => {
     Audio.Sound.createAsync.mockClear()
     Speech.speak.mockClear()
+    mockUnloadAsync.mockClear()
+    mockPlayAsync.mockClear()
+    mockPauseAsync.mockClear()
+    mockSetPositionAsync.mockClear()
+
+    Audio.Sound.createAsync.mockResolvedValue({
+      sound: {
+        playAsync: mockPlayAsync,
+        pauseAsync: mockPauseAsync,
+        unloadAsync: mockUnloadAsync,
+        setPositionAsync: mockSetPositionAsync,
+      },
+      status: {},
+    })
   })
 
   it('loads and plays audio on focus', async () => {
@@ -107,5 +126,25 @@ describe('PlayerScreen', () => {
       pitch: 1.0,
       volume: 1,
     })
+  })
+
+  it('renders loading component when audio is not loaded', () => {
+    const { getByTestId } = render(<PlayerScreen route={mockRoute} />)
+    expect(getByTestId('loading-view')).toBeTruthy()
+  })
+
+  it('render player components', async () => {
+    Audio.Sound.createAsync.mockResolvedValue({
+      sound: { playAsync: jest.fn(), unloadAsync: jest.fn() },
+      status: {},
+    })
+    const { findByText, queryByTestId, getByTestId } = render(
+      <PlayerScreen route={mockRoute} />
+    )
+    await waitFor(() => {
+      expect(queryByTestId('loading-view')).toBeNull()
+    })
+    const playButton = await getByTestId('play-button')
+    expect(playButton).toBeTruthy()
   })
 })

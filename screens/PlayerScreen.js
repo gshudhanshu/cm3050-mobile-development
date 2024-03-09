@@ -222,7 +222,7 @@ export default function PlayerScreen({ route }) {
             >
               <BackwardIcon width={48} height={48} fill={theme.colors.white} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={playPauseAudio}>
+            <TouchableOpacity onPress={playPauseAudio} testID='play-button'>
               {isPlaying ? (
                 <PauseIcon width={48} height={48} fill={theme.colors.white} />
               ) : (
