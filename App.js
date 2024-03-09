@@ -37,10 +37,10 @@ import JournalIcon from './assets/journal-icon'
 import ProgressIcon from './assets/progress-icon'
 import { RFValue } from 'react-native-responsive-fontsize'
 
-// LogBox.ignoreLogs([
-//   '`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.',
-//   '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.',
-// ])
+LogBox.ignoreLogs([
+  '`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.',
+  '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.',
+])
 
 // Prevent auto hiding of splash screen
 SplashScreen.preventAutoHideAsync()
