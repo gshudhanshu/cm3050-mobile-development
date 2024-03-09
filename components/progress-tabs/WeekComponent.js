@@ -82,7 +82,7 @@ export default function WeekComponent() {
               Weekly mood
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
-              On average, your mood was {averageMoodLast7Days}
+              On average, your mood was {averageMoodLast7Days} with scale 1-6
             </CText>
           </View>
         </View>

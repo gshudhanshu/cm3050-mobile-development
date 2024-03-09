@@ -34,6 +34,8 @@ describe('WeekComponent', () => {
       getByText('On average, you completed 20% more sessions this week')
     ).toBeTruthy()
     expect(getByText('Weekly mood')).toBeTruthy()
-    expect(getByText('On average, your mood was 3.5')).toBeTruthy()
+    expect(
+      getByText('On average, your mood was 3.5 with scale 1-6')
+    ).toBeTruthy()
   })
 })

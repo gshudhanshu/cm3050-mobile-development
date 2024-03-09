@@ -19,6 +19,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 const WelcomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={[GlobalStyles.safeAreaContainer]}>
+      {/* Set status bar color */}
       <StatusBar
         barStyle='light-content'
         backgroundColor={theme.colors.primary}
@@ -37,8 +38,9 @@ const WelcomeScreen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Image */}
+        {/* Image with circles */}
         <View style={styles.circles}>
+          {/* Nested circles with different opacities */}
           <View style={[styles.circle]} />
           <View
             style={[
@@ -99,9 +101,10 @@ const WelcomeScreen = ({ navigation }) => {
               },
             ]}
           />
+          {/* Display Meditation Image */}
           <Meditation style={styles.meditationImg} />
         </View>
-
+        {/* Get Started button */}
         <TouchableOpacity
           style={styles.getStartedButton}
           onPress={() => navigation.navigate('Login')}

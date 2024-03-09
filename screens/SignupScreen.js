@@ -47,6 +47,7 @@ const SignupScreen = () => {
   // Initialize auth here to use throughout the component
   const auth = getAuth()
 
+  // Effect to navigate to Home screen if user is already authenticated
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -56,22 +57,21 @@ const SignupScreen = () => {
     return unsubscribe
   }, [])
 
+  // Navigate to login screen
   const handleLogin = (values) => {
     navigation.navigate('Login')
   }
 
-  const handleGoogleLogin = () => {
-    // Add your Google login logic here
-  }
+  const handleGoogleLogin = () => {}
 
-  const handleFacebookLogin = () => {
-    // Add your Facebook login logic here
-  }
+  const handleFacebookLogin = () => {}
 
+  // Navigate to forget password screen
   const handleForgetPassword = () => {
     navigation.navigate('ForgetPassword')
   }
 
+  // Submit form data for signup
   const handleSubmit = async (values) => {
     const { email, password, firstName, lastName } = values
 
@@ -93,12 +93,14 @@ const SignupScreen = () => {
       user.firstName = firstName
       user.lastName = lastName
 
+      // Navigate to the Home screen or wherever you need
       console.log('User created and additional details saved in Firestore.')
-      navigation.navigate('Home') // Navigate to the Home screen or wherever you need
+      navigation.navigate('Home')
     } catch (error) {
       const errorCode = error.code
       const errorMessage = error.message
-      setSignUpError(errorMessage) // Display error message
+      // Display error message
+      setSignUpError(errorMessage)
       console.error(errorCode, errorMessage)
     }
   }
@@ -111,6 +113,7 @@ const SignupScreen = () => {
             <CText style={GlobalStyles.title}>Create Your Account</CText>
           </View>
           <View style={styles.buttons}>
+            {/* Google login button */}
             <Pressable
               onPress={handleGoogleLogin}
               style={[GlobalStyles.button, styles.button, styles.googleButton]}
@@ -120,6 +123,7 @@ const SignupScreen = () => {
                 Continue with google
               </CText>
             </Pressable>
+            {/* Facebook login button */}
             <Pressable
               onPress={handleFacebookLogin}
               style={[
@@ -134,7 +138,9 @@ const SignupScreen = () => {
               </CText>
             </Pressable>
           </View>
+          {/* Signup with email */}
           <CText style={styles.orText}>Or Signup with email</CText>
+          {/* Formik form for signup */}
           <Formik
             initialValues={{
               firstName: '',
@@ -155,6 +161,7 @@ const SignupScreen = () => {
             }) => (
               <View style={styles.container}>
                 <View style={styles.container}>
+                  {/* First name input */}
                   <TextInput
                     style={GlobalStyles.input}
                     onChangeText={handleChange('firstName')}
@@ -168,6 +175,7 @@ const SignupScreen = () => {
                       {errors.firstName}
                     </CText>
                   )}
+                  {/* Last name input */}
                   <TextInput
                     style={GlobalStyles.input}
                     onChangeText={handleChange('lastName')}
@@ -181,6 +189,7 @@ const SignupScreen = () => {
                       {errors.lastName}
                     </CText>
                   )}
+                  {/* Email input */}
                   <TextInput
                     style={GlobalStyles.input}
                     onChangeText={handleChange('email')}
@@ -192,6 +201,7 @@ const SignupScreen = () => {
                   {touched.email && errors.email && (
                     <CText style={GlobalStyles.errorText}>{errors.email}</CText>
                   )}
+                  {/* Password input */}
                   <TextInput
                     style={GlobalStyles.input}
                     onChangeText={handleChange('password')}
@@ -205,10 +215,11 @@ const SignupScreen = () => {
                       {errors.password}
                     </CText>
                   )}
+                  {/* Display signup error */}
                   {signUpError && (
                     <CText style={GlobalStyles.errorText}>{signUpError}</CText>
                   )}
-
+                  {/* Submit button */}
                   <Pressable
                     onPress={handleSubmit}
                     style={GlobalStyles.button}
@@ -217,6 +228,7 @@ const SignupScreen = () => {
                     <CText style={GlobalStyles.buttonText}>Sign Up</CText>
                   </Pressable>
                 </View>
+                {/* Navigation to login screen */}
                 <View style={styles.loginContainer}>
                   <CText style={styles.forgetPassword}>
                     Already have an account?

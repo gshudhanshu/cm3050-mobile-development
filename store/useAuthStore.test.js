@@ -1,4 +1,4 @@
-import useAuthStore from './useAuthStore' // Update this path
+import useAuthStore from './useAuthStore'
 
 const dummyUserProfile = {
   name: 'John Doe',

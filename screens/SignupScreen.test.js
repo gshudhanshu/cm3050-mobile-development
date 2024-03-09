@@ -11,7 +11,7 @@ jest.mock('@react-navigation/native', () => {
   }
 })
 
-describe('<SignupScreen />', () => {
+describe('Signup Screen Tests', () => {
   it('renders signup form correctly', () => {
     const { getByPlaceholderText } = render(<SignupScreen />)
     expect(getByPlaceholderText('First Name')).toBeTruthy()

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { db } from '../firebase/firebase' // Adjust according to your project structure
+import { db } from '../firebase/firebase'
 import {
   doc,
   getDoc,

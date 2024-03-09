@@ -2,7 +2,7 @@ import React from 'react'
 import { render, fireEvent } from '@testing-library/react-native'
 import WelcomeScreen from './WelcomeScreen'
 
-describe('<WelcomeScreen />', () => {
+describe('Welcome Screen Tests', () => {
   it('renders welcome text correctly', () => {
     const { getByText } = render(<WelcomeScreen />)
     expect(getByText('Welcome')).toBeTruthy()

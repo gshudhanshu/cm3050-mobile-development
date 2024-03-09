@@ -14,7 +14,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import theme from './utils/theme'
-import useFirebaseAuthState from './utils/useFirebaseAuthState'
 import useAuthStore from './store/useAuthStore'
 import WelcomeScreen from './screens/WelcomeScreen'
 import LoginScreen from './screens/LoginScreen'
@@ -43,6 +42,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 //   '`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.',
 // ])
 
+// Prevent auto hiding of splash screen
 SplashScreen.preventAutoHideAsync()
 
 // Configure screen transition animation
@@ -57,13 +57,14 @@ const config = {
     restSpeedThreshold: 0.01,
   },
 }
-
+// navigation stacks and flows
 const AuthStack = createStackNavigator()
 const MainTab = createBottomTabNavigator()
 const RootStack = createStackNavigator()
 const SearchStack = createStackNavigator()
 // const JournalStack = createStackNavigator()
 
+// authentication flow
 const AuthFlow = () => (
   <AuthStack.Navigator>
     <AuthStack.Screen
@@ -77,6 +78,7 @@ const AuthFlow = () => (
   </AuthStack.Navigator>
 )
 
+// search stack
 const SearchStackScreen = () => (
   <SearchStack.Navigator
     initialRouteName='Search'
@@ -99,6 +101,7 @@ const SearchStackScreen = () => (
 //   </JournalStack.Navigator>
 // )
 
+// main app flow with bottom tab navigator
 const MainAppFlow = () => (
   <MainTab.Navigator
     screenOptions={{
@@ -175,7 +178,9 @@ const MainAppFlow = () => (
   </MainTab.Navigator>
 )
 
+// Main app component
 export default function App() {
+  // Load fonts and check authentication state
   let [fontsLoaded, fontError] = useFonts({
     Poppins_300Light,
     Poppins_400Regular,
@@ -184,9 +189,10 @@ export default function App() {
     Poppins_700Bold,
   })
 
-  useFirebaseAuthState()
+  // useFirebaseAuthState()
   const { isAuthenticated, user } = useAuthStore()
 
+  // Hide splash screen after fonts are loaded
   useEffect(() => {
     async function prepare() {
       await SplashScreen.preventAutoHideAsync()
@@ -194,6 +200,7 @@ export default function App() {
     prepare()
   }, [])
 
+  // Check font loading status and hide splash screen
   if (!fontsLoaded && !fontError) {
     return undefined
   } else {

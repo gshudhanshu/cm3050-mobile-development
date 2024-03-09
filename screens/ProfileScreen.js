@@ -27,11 +27,6 @@ dayjs.extend(customParseFormat)
 dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 
-import {
-  uploadProfilePicture,
-  saveUserProfile,
-  getUserProfile,
-} from '../utils/utils'
 import useAuthStore from '../store/useAuthStore'
 
 import { auth } from '../firebase/firebase'
@@ -51,7 +46,12 @@ const ProfileSchema = Yup.object().shape({
 
 const ProfileScreen = () => {
   const navigation = useNavigation()
-  const { setUserProfile } = useAuthStore()
+  const {
+    setUserProfile,
+    getUserProfile,
+    saveUserProfile,
+    uploadProfilePicture,
+  } = useAuthStore()
   const [initialValues, setInitialValues] = useState({
     firstName: '',
     lastName: '',
