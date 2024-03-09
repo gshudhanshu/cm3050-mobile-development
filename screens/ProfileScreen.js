@@ -148,6 +148,7 @@ const ProfileScreen = () => {
                     <TouchableOpacity
                       onPress={() => pickImage(setFieldValue)}
                       style={{ alignItems: 'center' }}
+                      testID='pick-image-button'
                     >
                       <Image
                         source={{
@@ -165,6 +166,7 @@ const ProfileScreen = () => {
                       onBlur={handleBlur('firstName')}
                       value={values.firstName}
                       placeholder='First Name'
+                      testID='first-name-input'
                     />
                     {touched.firstName && errors.firstName && (
                       <Text style={GlobalStyles.errorText}>
@@ -177,6 +179,7 @@ const ProfileScreen = () => {
                       onBlur={handleBlur('lastName')}
                       value={values.lastName}
                       placeholder='Last Name'
+                      testID='last-name-input'
                     />
                     {touched.lastName && errors.lastName && (
                       <Text style={GlobalStyles.errorText}>
@@ -189,6 +192,7 @@ const ProfileScreen = () => {
                         value={values.dob ? values.dob.toDateString() : ''}
                         placeholder='Date of Birth'
                         editable={false} // Makes the text input non-editable
+                        testID='date-picker'
                       />
                     </TouchableOpacity>
                     {showDatePicker && (
@@ -209,6 +213,7 @@ const ProfileScreen = () => {
                         setFieldValue('gender', itemValue)
                       }
                       style={GlobalStyles.input}
+                      testID='gender-picker'
                     >
                       <Picker.Item label='Male' value='male' />
                       <Picker.Item label='Female' value='female' />
@@ -217,6 +222,7 @@ const ProfileScreen = () => {
                     <TouchableOpacity
                       onPress={handleSubmit}
                       style={GlobalStyles.button}
+                      testID='submit-button'
                     >
                       <Text style={GlobalStyles.buttonText}>Save Profile</Text>
                     </TouchableOpacity>

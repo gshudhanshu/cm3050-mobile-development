@@ -3,11 +3,12 @@ module.exports = function (api) {
   return {
     presets: [
       'babel-preset-expo',
+      '@babel/preset-typescript',
       // ['@babel/preset-env', { loose: true }],
       //   ['@babel/preset-env', { targets: { node: 'current' }, loose: true }],
-      //   '@babel/preset-react',
-      //   'module:metro-react-native-babel-preset',
+      // '@babel/preset-react',
+      // 'module:metro-react-native-babel-preset',
     ],
-    // plugins: ['@babel/plugin-transform-runtime'],
+    plugins: ['@babel/plugin-transform-runtime'],
   }
 }

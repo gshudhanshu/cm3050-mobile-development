@@ -208,7 +208,11 @@ const SignupScreen = () => {
                     <CText style={GlobalStyles.errorText}>{signUpError}</CText>
                   )}
 
-                  <Pressable onPress={handleSubmit} style={GlobalStyles.button}>
+                  <Pressable
+                    onPress={handleSubmit}
+                    style={GlobalStyles.button}
+                    testID='signup-button'
+                  >
                     <CText style={GlobalStyles.buttonText}>Sign Up</CText>
                   </Pressable>
                 </View>
@@ -216,7 +220,7 @@ const SignupScreen = () => {
                   <CText style={styles.forgetPassword}>
                     Already have an account?
                   </CText>
-                  <Pressable onPress={handleLogin}>
+                  <Pressable onPress={handleLogin} testID='login-button'>
                     <CText style={styles.loginButton}>Login</CText>
                   </Pressable>
                 </View>

@@ -1,6 +1,6 @@
 // Import necessary utilities and components
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react-native'
+import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import HomeScreen from './HomeScreen' // Adjust the import path according to your file structure
 import { NavigationContainer } from '@react-navigation/native'
 import useWellnessStore from '../store/useWellnessStore'
