@@ -36,3 +36,7 @@ npm install
 npx expo start
 
 This will open a browser window with the Expo developer tools. You can then run the app on your device using the Expo Go app or on an emulator.
+
+## Run the tests:
+
+npm test
