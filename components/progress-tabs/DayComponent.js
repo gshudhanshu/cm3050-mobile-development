@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { PieChart, BarChart } from 'react-native-gifted-charts'
@@ -27,6 +28,7 @@ export default function DayComponent() {
   // State variables for modal and goal value
   const [modalVisible, setModalVisible] = useState(false)
   const [goalValue, setGoalValue] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const { percentageDifferences, progress, todayProgressData } =
     useSessionStore()
@@ -87,6 +89,7 @@ export default function DayComponent() {
 
   // Event handler for submitting goal
   const handleSubmit = async () => {
+    setLoading(true)
     try {
       await setDailyGoal(goalValue * 60)
     } catch (error) {
@@ -94,6 +97,7 @@ export default function DayComponent() {
     }
     // Close the modal after submission
     setModalVisible(false)
+    setLoading(false)
   }
 
   return (
@@ -185,7 +189,11 @@ export default function DayComponent() {
                   style={GlobalStyles.button}
                   onPress={handleSubmit}
                 >
-                  <CText style={GlobalStyles.buttonText}>Submit</CText>
+                  {loading ? (
+                    <ActivityIndicator size='small' color='#FFF' />
+                  ) : (
+                    <CText style={GlobalStyles.buttonText}>Submit</CText>
+                  )}
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[GlobalStyles.button, modalStyles.cancelButton]}

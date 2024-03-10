@@ -12,6 +12,7 @@ import {
   Button,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
@@ -41,6 +42,7 @@ const JournalEntryScreen = ({ route }) => {
   const { addJournal, editJournal, deleteJournal } = useJournalStore()
   const { user } = useAuthStore()
   const { imageUrl, date, title, description, id } = route.params || {}
+  const [loading, setLoading] = useState(false)
 
   const initialValues = id
     ? {
@@ -72,6 +74,7 @@ const JournalEntryScreen = ({ route }) => {
   }
 
   const submitForm = async (values, actions) => {
+    setLoading(true)
     if (id) {
       // Editing an existing journal
       await editJournal(user.uid, id, values)
@@ -83,6 +86,7 @@ const JournalEntryScreen = ({ route }) => {
     }
     navigation.navigate('Journal')
     actions.resetForm()
+    setLoading(false)
   }
 
   return (
@@ -180,7 +184,11 @@ const JournalEntryScreen = ({ route }) => {
                   onPress={handleSubmit}
                   style={GlobalStyles.button}
                 >
-                  <Text style={GlobalStyles.buttonText}>Submit Journal</Text>
+                  {loading ? (
+                    <ActivityIndicator size='small' color='#FFF' />
+                  ) : (
+                    <Text style={GlobalStyles.buttonText}>Submit Journal</Text>
+                  )}
                 </TouchableOpacity>
               </View>
             )}

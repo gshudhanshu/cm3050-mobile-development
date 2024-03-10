@@ -12,6 +12,7 @@ import {
   StatusBar,
   TextInput,
   Platform,
+  ActivityIndicator,
 } from 'react-native'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
@@ -60,6 +61,7 @@ const ProfileScreen = () => {
     profilePicture: '',
   })
   const [showDatePicker, setShowDatePicker] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   // Fetch user profile data
   const fetchUserProfile = async () => {
@@ -106,6 +108,7 @@ const ProfileScreen = () => {
   }
 
   const submitForm = async (values) => {
+    setLoading(true)
     try {
       // Submit form data and update user profile
       const userId = auth.currentUser.uid
@@ -117,6 +120,7 @@ const ProfileScreen = () => {
       console.error('Failed to update profile:', error)
       Alert.alert('Failed to update profile.')
     }
+    setLoading(false)
   }
 
   return (
@@ -233,7 +237,13 @@ const ProfileScreen = () => {
                       style={GlobalStyles.button}
                       testID='submit-button'
                     >
-                      <Text style={GlobalStyles.buttonText}>Save Profile</Text>
+                      {loading ? (
+                        <ActivityIndicator size='small' color='#FFF' />
+                      ) : (
+                        <Text style={GlobalStyles.buttonText}>
+                          Save Profile
+                        </Text>
+                      )}
                     </TouchableOpacity>
                   </View>
                 </View>
