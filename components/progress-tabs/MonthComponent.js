@@ -75,8 +75,8 @@ export default function MonthComponent() {
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
               On average, you completed{' '}
-              {percentageDifferences.last30Days.toFixed(2) || 0}% more sessions
-              this month
+              {percentageDifferences?.last30Days?.toFixed(2) || 0}% more
+              sessions this month
             </CText>
             {/* Display average mood for the last 30 days */}
             <CText
@@ -86,7 +86,7 @@ export default function MonthComponent() {
               Monthly mood
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
-              On average, your mood was {averageMoodLast30Days.toFixed(2) || 0}{' '}
+              On average, your mood was {averageMoodLast30Days?.toFixed(2) || 0}{' '}
               with scale 1-6
             </CText>
           </View>

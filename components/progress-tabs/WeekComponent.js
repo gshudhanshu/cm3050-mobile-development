@@ -72,7 +72,7 @@ export default function WeekComponent() {
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
               On average, you completed{' '}
-              {percentageDifferences.last7Days.toFixed(2) || 0}% more sessions
+              {percentageDifferences?.last7Days?.toFixed(2) || 0}% more sessions
               this week
             </CText>
             {/* Display average mood for the last 7 days */}
@@ -83,7 +83,7 @@ export default function WeekComponent() {
               Weekly mood
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
-              On average, your mood was {averageMoodLast7Days.toFixed(2) || 0}{' '}
+              On average, your mood was {averageMoodLast7Days?.toFixed(2) || 0}{' '}
               with scale 1-6
             </CText>
           </View>
