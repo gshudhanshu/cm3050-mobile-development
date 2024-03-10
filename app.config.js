@@ -58,6 +58,7 @@ export default {
     },
     runtimeVersion: {
       policy: 'appVersion',
+      version: '50.0.11',
     },
   },
 }
