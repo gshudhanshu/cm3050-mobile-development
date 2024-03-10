@@ -96,6 +96,7 @@ const LoginScreen = () => {
             <Pressable
               onPress={handleGoogleLogin}
               style={[GlobalStyles.button, styles.button, styles.googleButton]}
+              disabled={true}
             >
               <GoogleIcon width={25} height={25} />
               <CText style={[GlobalStyles.buttonText, styles.buttonText]}>
@@ -109,6 +110,7 @@ const LoginScreen = () => {
                 styles.button,
                 styles.facebookButton,
               ]}
+              disabled={true}
             >
               <FacebookIcon width={25} height={25} />
               <CText style={[GlobalStyles.buttonText]}>
@@ -120,7 +122,10 @@ const LoginScreen = () => {
           <CText style={styles.orText}>Or Login with email</CText>
           {/* Formik form for email and password */}
           <Formik
-            initialValues={{ email: '', password: '' }}
+            initialValues={{
+              email: 'gunjalshudhanshu@gmail.com',
+              password: 'pass@123',
+            }}
             validationSchema={loginSchema}
             onSubmit={(values) => handleLogin(values)}
           >
@@ -161,7 +166,7 @@ const LoginScreen = () => {
                   <Pressable onPress={handleSubmit} style={GlobalStyles.button}>
                     <CText style={GlobalStyles.buttonText}>Login</CText>
                   </Pressable>
-                  <Pressable onPress={handleForgetPassword}>
+                  <Pressable onPress={handleForgetPassword} disabled={true}>
                     <CText style={styles.forgetPassword}>
                       Forget Password?
                     </CText>

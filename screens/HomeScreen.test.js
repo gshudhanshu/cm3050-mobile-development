@@ -72,7 +72,7 @@ describe('HomeScreen', () => {
 
   it('renders welcome message and daily quote', () => {
     const { getByText } = renderHomeScreen()
-    expect(getByText('Welcome back, Ruby')).toBeTruthy()
+    expect(getByText(' Welcome back, User')).toBeTruthy()
     expect(getByText('Life is beautiful')).toBeTruthy()
   })
 

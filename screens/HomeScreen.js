@@ -47,7 +47,7 @@ export default function HomeScreen() {
 
   const { dailyQuote, fetchQuote, setUserMood, fetchUserMood, userMood } =
     useWellnessStore()
-  const { user } = useAuthStore()
+  const { user, profile } = useAuthStore()
 
   const {
     fetchPopularSessions,
@@ -90,7 +90,7 @@ export default function HomeScreen() {
           {/* Welcome */}
           <View style={styles.welcomeContainer}>
             <CText weight='semiBold' style={styles.welcomeText}>
-              Welcome back, Ruby
+              Welcome back, {profile?.firstName || 'User'}
             </CText>
             <CText style={styles.welcomeSubText}>
               How're you feeling today?
@@ -174,7 +174,9 @@ export default function HomeScreen() {
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
                 Popular Sessions
               </CText>
-              <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
+              <CText style={GlobalStyles.blockSubTitle}>
+                {popularSessions.length} sessions
+              </CText>
             </View>
             <ScrollView
               directionalLockEnabled={'false'}
@@ -208,7 +210,9 @@ export default function HomeScreen() {
               <CText weight='semiBold' style={GlobalStyles.blockTitle}>
                 Curated Sessions
               </CText>
-              <CText style={GlobalStyles.blockSubTitle}>25 sessions</CText>
+              <CText style={GlobalStyles.blockSubTitle}>
+                {curatedSessions.length} sessions
+              </CText>
             </View>
             <ScrollView
               directionalLockEnabled={'false'}

@@ -123,6 +123,19 @@ const ProfileScreen = () => {
     setLoading(false)
   }
 
+  const handleLogout = async () => {
+    setLoading(true)
+    try {
+      // Logout user and navigate to login screen
+      await auth.signOut()
+      navigation.navigate('Welcome')
+    } catch (error) {
+      console.error('Failed to logout:', error)
+      Alert.alert('Failed to logout.')
+    }
+    setLoading(false)
+  }
+
   return (
     <SafeAreaView style={GlobalStyles.safeAreaContainer}>
       <ScrollView>
@@ -245,6 +258,18 @@ const ProfileScreen = () => {
                         </Text>
                       )}
                     </TouchableOpacity>
+                    {/* Logout button */}
+                    <TouchableOpacity
+                      onPress={handleLogout}
+                      style={[GlobalStyles.button, styles.logoutButton]}
+                      testID='logout-button'
+                    >
+                      {loading ? (
+                        <ActivityIndicator size='small' color='#FFF' />
+                      ) : (
+                        <Text style={[GlobalStyles.buttonText]}>Logout</Text>
+                      )}
+                    </TouchableOpacity>
                   </View>
                 </View>
               )}
@@ -276,6 +301,10 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     width: '100%',
+  },
+
+  logoutButton: {
+    backgroundColor: theme.colors.grayMedium,
   },
 })
 

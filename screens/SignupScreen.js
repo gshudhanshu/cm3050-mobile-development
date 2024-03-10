@@ -117,6 +117,7 @@ const SignupScreen = () => {
             <Pressable
               onPress={handleGoogleLogin}
               style={[GlobalStyles.button, styles.button, styles.googleButton]}
+              disabled={true}
             >
               <GoogleIcon width={25} height={25} />
               <CText style={[GlobalStyles.buttonText, styles.buttonText]}>
@@ -131,6 +132,7 @@ const SignupScreen = () => {
                 styles.button,
                 styles.facebookButton,
               ]}
+              disabled={true}
             >
               <FacebookIcon width={25} height={25} />
               <CText style={[GlobalStyles.buttonText]}>
