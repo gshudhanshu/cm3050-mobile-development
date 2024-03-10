@@ -62,6 +62,11 @@ jest.mock('./store/useAuthStore', () => ({
   }),
 }))
 
+jest.mock('./utils/useFirebaseAuthState', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}))
+
 jest.mock('react-native-gifted-charts', () => {
   return {
     PieChart: jest.fn(),
