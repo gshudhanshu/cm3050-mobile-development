@@ -17,6 +17,9 @@ To run Calm Mind on your local machine for development and testing purposes, fol
 Ensure you have Node.js and npm installed on your computer. Download Node.js and npm
 https://nodejs.org/en/download
 
+Expo CLI is also required:
+npm install -g expo-cli
+
 ## Installation
 
 Clone the repository:
@@ -25,18 +28,18 @@ Or download the zip file.
 
 ## Navigate to the project directory:
 
-cd cm3050-mobile-development
+        cd cm3050-mobile-development
 
 ## Install the dependencies:
 
-npm install
+        npm install
 
 ## Start the Expo project:
 
-npx expo start
+        npx expo start
 
 This will open a browser window with the Expo developer tools. You can then run the app on your device using the Expo Go app or on an emulator.
 
 ## Run the tests:
 
-npm test
+        npm test
