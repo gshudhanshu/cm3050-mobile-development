@@ -42,8 +42,9 @@ const LoginScreen = () => {
   useEffect(() => {
     // Redirect to Home screen if user is already logged in
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
+      if (user !== null) {
         navigation.navigate('Home')
+        // navigation.navigate('Home')
       }
     })
     return unsubscribe
@@ -56,6 +57,7 @@ const LoginScreen = () => {
         // Signed in
         const user = userCredential.user
         console.log('user', user)
+        navigation.navigate('Home')
       })
       .catch((error) => {
         const errorCode = error.code

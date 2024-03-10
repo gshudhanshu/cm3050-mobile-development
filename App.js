@@ -14,6 +14,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import theme from './utils/theme'
+import useFirebaseAuthState from './utils/useFirebaseAuthState'
 import useAuthStore from './store/useAuthStore'
 import WelcomeScreen from './screens/WelcomeScreen'
 import LoginScreen from './screens/LoginScreen'
@@ -189,7 +190,7 @@ export default function App() {
     Poppins_700Bold,
   })
 
-  // useFirebaseAuthState()
+  useFirebaseAuthState()
   const { isAuthenticated, user } = useAuthStore()
 
   // Hide splash screen after fonts are loaded
