@@ -285,9 +285,18 @@ const useSessionStore = create((set) => ({
     const current30DaysAvg = getAverageForPeriod(30)
     const last30DaysAvg = getAverageForPeriod(60) - current30DaysAvg
     const last7Days =
-      last7DaysAvg === 0 ? 100 : (current7DaysAvg / last7DaysAvg) * 100
+      last7DaysAvg === 0
+        ? current7DaysAvg === 0
+          ? 'N/A'
+          : 'Infinity'
+        : ((current7DaysAvg / last7DaysAvg) * 100).toFixed(2)
+
     const last30Days =
-      last30DaysAvg === 0 ? 100 : (current30DaysAvg / last30DaysAvg) * 100
+      last30DaysAvg === 0
+        ? current30DaysAvg === 0
+          ? 'N/A'
+          : 'Infinity'
+        : ((current30DaysAvg / last30DaysAvg) * 100).toFixed(2)
 
     set({
       todayProgressData: todaySessionsData,
@@ -295,10 +304,10 @@ const useSessionStore = create((set) => ({
       percentageDifferences: {
         current7DaysAvg,
         last7DaysAvg,
-        last7Days: last7Days || 0,
+        last7Days: last7Days,
         current30DaysAvg,
         last30DaysAvg,
-        last30Days: last30Days || 0,
+        last30Days: last30Days,
         todayCompletedGoalPercentage:
           (getAverageForPeriod(1) / dailyGoal) * 100,
       },

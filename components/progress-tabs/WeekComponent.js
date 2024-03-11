@@ -71,9 +71,8 @@ export default function WeekComponent() {
               Weekly progress
             </CText>
             <CText style={[GlobalStyles.blockSubTitle, styles.blockText]}>
-              On average, you completed{' '}
-              {percentageDifferences?.last7Days?.toFixed(2) || 0}% more sessions
-              this week
+              On average, you completed {percentageDifferences?.last7Days}% more
+              sessions this week
             </CText>
             {/* Display average mood for the last 7 days */}
             <CText

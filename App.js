@@ -107,18 +107,18 @@ const MainAppFlow = () => (
   <MainTab.Navigator
     screenOptions={{
       tabBarLabelStyle: {
-        fontSize: 12,
+        fontSize: RFValue(12),
         fontFamily: 'Poppins_400Regular',
-        paddingBottom: 10,
+        paddingBottom: RFValue(10),
       },
       tabBarStyle: {
         backgroundColor: theme.colors.primary,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
+        borderTopLeftRadius: RFValue(15),
+        borderTopRightRadius: RFValue(15),
         position: 'absolute',
         borderTopWidth: 0,
-        height: RFValue(70),
-        paddingVertical: 5,
+        height: RFValue(80),
+        paddingVertical: RFValue(5),
       },
       tabBarActiveTintColor: theme.colors.white,
       tabBarInactiveTintColor: theme.colors.grayMedium,

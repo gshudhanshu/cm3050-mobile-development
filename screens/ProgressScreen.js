@@ -139,6 +139,7 @@ export default function ProgressScreen() {
                     third: MonthComponent,
                   })}
                   onIndexChange={setIndex}
+                  swipeEnabled={false}
                   initialLayout={{ width: layout.width }}
                   style={[styles.tabView, { height: tabViewHeight }]}
                   renderTabBar={(props) => (
