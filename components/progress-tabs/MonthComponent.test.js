@@ -35,7 +35,7 @@ describe('MonthComponent', () => {
     ).toBeTruthy()
     expect(getByText('Monthly mood')).toBeTruthy()
     expect(
-      getByText('On average, your mood was 3.5 with scale 1-6')
+      getByText('On average, your mood was 3.50 with scale 1-6')
     ).toBeTruthy()
   })
 })

@@ -75,6 +75,19 @@ export default function ProgressScreen() {
     return <Loading testID='loading-view' />
   }
 
+  const renderComponent = () => {
+    switch (index) {
+      case 0:
+        return <DayComponent />
+      case 1:
+        return <WeekComponent />
+      case 2:
+        return <MonthComponent />
+      default:
+        return <DayComponent />
+    }
+  }
+
   return (
     <SafeAreaView style={GlobalStyles.safeAreaContainer}>
       <KeyboardAvoidingView style={GlobalStyles.container}>
@@ -133,15 +146,16 @@ export default function ProgressScreen() {
               <View style={styles.tabContainer}>
                 <TabView
                   navigationState={{ index, routes }}
-                  renderScene={SceneMap({
-                    first: DayComponent,
-                    second: WeekComponent,
-                    third: MonthComponent,
-                  })}
+                  // renderScene={SceneMap({
+                  //   first: DayComponent,
+                  //   second: WeekComponent,
+                  //   third: MonthComponent,
+                  // })}
+                  renderScene={() => null}
                   onIndexChange={setIndex}
                   swipeEnabled={false}
                   initialLayout={{ width: layout.width }}
-                  style={[styles.tabView, { height: tabViewHeight }]}
+                  // style={[styles.tabView, { height: tabViewHeight }]}
                   renderTabBar={(props) => (
                     <TabBar
                       {...props}
@@ -161,6 +175,7 @@ export default function ProgressScreen() {
                     />
                   )}
                 />
+                {renderComponent()}
               </View>
             </View>
           </View>

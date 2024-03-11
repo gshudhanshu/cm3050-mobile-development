@@ -11,6 +11,7 @@ import {
   LogBox,
   Platform,
   Alert,
+  Dimensions,
 } from 'react-native'
 import Slider from '@react-native-community/slider'
 import React, { useState, useEffect, useRef } from 'react'
@@ -148,6 +149,17 @@ export default function PlayerScreen({ route }) {
         (time) => time * 1000 < newPositionMillis
       )
     )
+    // const filteredInstructions = new Set(
+    //   [...spokenInstructionsRef.current].filter(
+    //     (time) => time > newPositionMillis / 1000
+    //   )
+    // )
+
+    // spokenInstructionsRef.current.clear()
+
+    if (playbackStatus.isPlaying) {
+      checkAndSpeakInstructions(newPositionMillis)
+    }
   }
 
   const formatTime = (milliseconds) => {
@@ -216,7 +228,8 @@ export default function PlayerScreen({ route }) {
             value={
               playbackStatus.positionMillis / playbackStatus.durationMillis || 0
             }
-            onValueChange={seekAudio}
+            // onValueChange={seekAudio}
+            onSlidingComplete={seekAudio}
             minimumTrackTintColor='#FFFFFF'
             maximumTrackTintColor='#000000'
           />
@@ -305,7 +318,8 @@ const styles = StyleSheet.create({
   },
 
   progressBar: {
-    width: RFPercentage(50),
+    width: Dimensions.get('window').width - RFValue(20),
+    // width: RFPercentage(50),
     height: RFValue(40),
   },
   timeContainer: {

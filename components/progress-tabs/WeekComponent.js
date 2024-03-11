@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Dimensions } from 'react-native'
 import { BarChart } from 'react-native-gifted-charts'
 import { RFValue } from 'react-native-responsive-fontsize'
 import GlobalStyles from '../../utils/GlobalStyles'
@@ -53,6 +53,9 @@ export default function WeekComponent() {
         barWidth={15}
         noOfSections={3}
         barBorderRadius={4}
+        width={
+          Dimensions.get('window').width - RFValue(20) * 2 - RFValue(10) * 2
+        }
         frontColor={theme.colors.tertiary}
         data={barData}
         yAxisThickness={0}

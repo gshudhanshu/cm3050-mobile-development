@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Dimensions } from 'react-native'
 import { BarChart, LineChart } from 'react-native-gifted-charts'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import GlobalStyles from '../../utils/GlobalStyles'
@@ -54,6 +54,9 @@ export default function MonthComponent() {
         barBorderRadius={4}
         spacing={RFValue(5.3)}
         // frontColor='lightgray'
+        width={
+          Dimensions.get('window').width - RFValue(20) * 2 - RFValue(10) * 2
+        }
         frontColor={theme.colors.tertiary}
         data={barData}
         yAxisThickness={0}
@@ -104,7 +107,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,
-    width: RFPercentage(46),
+    width: '100%',
     marginVertical: RFValue(30),
   },
 

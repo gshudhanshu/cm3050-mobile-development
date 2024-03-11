@@ -24,7 +24,7 @@ const SessionCard = ({
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.cardContainer, { minWidth: minCardWidth }]}
+      style={[styles.cardContainer, { width: minCardWidth }]}
       onPress={onPress}
       testID='session-card'
     >

@@ -17,6 +17,13 @@ export default {
       bundleIdentifier: 'com.uol.calmmind',
       // googleServicesFile: process.env.GOOGLE_SERVICES_INFOPLIST,
       googleServicesFile: './GoogleService-Info.plist',
+      infoPlist: {
+        NSAppTransportSecurity: [
+          {
+            xml: '<dict><key>NSAllowsArbitraryLoads</key><true /></dict>',
+          },
+        ],
+      },
     },
     android: {
       adaptiveIcon: {
