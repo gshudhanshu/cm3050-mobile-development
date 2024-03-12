@@ -50,7 +50,9 @@ export default function PlayerScreen({ route }) {
   const [sound, setSound] = useState(null)
   const [playbackStatus, setPlaybackStatus] = useState({})
   const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
+  // const [isMuted, setIsMuted] = useState(false)
+  const isMuted = useRef(false)
+
   const [currentInstruction, setCurrentInstruction] =
     useState('No Instructions')
   const [isLoading, setIsLoading] = useState(true)
@@ -71,6 +73,7 @@ export default function PlayerScreen({ route }) {
       // Cleanup when the component unmounts
       unloadAudio()
       spokenInstructionsRef.current = new Set()
+      Speech.stop()
     }
   }, [session, isFocused])
 
@@ -141,6 +144,8 @@ export default function PlayerScreen({ route }) {
   }
 
   const seekAudio = async (value) => {
+    // Stop speaking instructions when seeking audio
+    Speech.stop()
     // Seek audio to the specified position
     const newPositionMillis = value * playbackStatus.durationMillis
     await sound.setPositionAsync(newPositionMillis)
@@ -178,7 +183,8 @@ export default function PlayerScreen({ route }) {
         currentTimeInSeconds >= instruction.time &&
         !spokenInstructionsRef.current.has(instruction.time)
       ) {
-        if (!isMuted) {
+        console.log('isMuted', isMuted.current)
+        if (!isMuted.current) {
           // Speak instruction if not muted
           Speech.speak(instruction.text, {
             rate: 0.75,
@@ -270,10 +276,10 @@ export default function PlayerScreen({ route }) {
           <View style={styles.instructionsContainer}>
             <Text style={styles.instructionsText}>{currentInstruction}</Text>
             <TouchableOpacity
-              onPress={() => setIsMuted(!isMuted)}
+              onPress={() => (isMuted.current = !isMuted.current)}
               style={styles.muteButton}
             >
-              {isMuted ? (
+              {isMuted.current ? (
                 <SpeakerMuteIcon width={20} stroke={theme.colors.white} />
               ) : (
                 <SpeakerIcon width={20} stroke={theme.colors.white} />
