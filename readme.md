@@ -8,16 +8,16 @@ Mood Tracking: Log your mood daily with intuitive visuals and insights into your
 Guided Meditation: Access a library of meditation sessions tailored to various needs and preferences, enhancing relaxation and mindfulness.
 Journaling: Keep a personal journal to reflect on your thoughts, feelings, and experiences, with prompts to guide your writing.
 
-![welcome]{width=500px}(screenshots/welcome.png)
-![home]{width=500px}(screenshots/home.png)
-![journal]{width=500px}(screenshots/journal.png)
-![lib]{width=500px}(screenshots/lib.png)
-![login]{width=500px}(screenshots/login.png)
-![player]{width=500px}(screenshots/player.png)
-![signup]{width=500px}(screenshots/signup.png)
-![stat-01]{width=500px}(screenshots/stat-01.png)
-![stat-02]{width=500px}(screenshots/stat-02.png)
-![stat-03]{width=500px}(screenshots/stat-03.png)
+<img src="screenshots/welcome.png" alt="welcome" style="max-width: 300px;">
+<img src="screenshots/home.png" alt="home" style="max-width: 300px;">
+<img src="screenshots/journal.png" alt="journal" style="max-width: 300px;">
+<img src="screenshots/lib.png" alt="lib" style="max-width: 300px;">
+<img src="screenshots/login.png" alt="login" style="max-width: 300px;">
+<img src="screenshots/player.png" alt="player" style="max-width: 300px;">
+<img src="screenshots/sign-up.png" alt="sign-up" style="max-width: 300px;">
+<img src="screenshots/stat-01.png" alt="stat-01" style="max-width: 300px;">
+<img src="screenshots/stat-02.png" alt="stat-02" style="max-width: 300px;">
+<img src="screenshots/stat-03.png" alt="stat-03" style="max-width: 300px;">
 
 ## Getting Started
 
