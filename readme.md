@@ -8,7 +8,16 @@ Mood Tracking: Log your mood daily with intuitive visuals and insights into your
 Guided Meditation: Access a library of meditation sessions tailored to various needs and preferences, enhancing relaxation and mindfulness.
 Journaling: Keep a personal journal to reflect on your thoughts, feelings, and experiences, with prompts to guide your writing.
 
-![home](screenshots/home.png) ![journal](screenshots/journal.png) ![lib](screenshots/lib.png) ![login](screenshots/login.png) ![player](screenshots/player.png) ![signup](screenshots/signup.png) ![stat-01](screenshots/stat-01.png) ![stat-02](screenshots/stat-02.png) ![stat-03](screenshots/stat-03.png) ![welcome](screenshots/welcome.png)
+![welcome]{width=500px}(screenshots/welcome.png)
+![home]{width=500px}(screenshots/home.png)
+![journal]{width=500px}(screenshots/journal.png)
+![lib]{width=500px}(screenshots/lib.png)
+![login]{width=500px}(screenshots/login.png)
+![player]{width=500px}(screenshots/player.png)
+![signup]{width=500px}(screenshots/signup.png)
+![stat-01]{width=500px}(screenshots/stat-01.png)
+![stat-02]{width=500px}(screenshots/stat-02.png)
+![stat-03]{width=500px}(screenshots/stat-03.png)
 
 ## Getting Started
 
